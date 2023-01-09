@@ -493,12 +493,7 @@ static InterpretResult run() {
             auto* subclass_methods = &AS_CLASS(superclass)->methods;
             for (const auto& [key, value] : subclass_methods->entries())
                 subclass->methods.set(key, value);
-            /*
-            for (auto i = 0; i < subclass_methods->capacity(); i++) {
-                if (auto* entry = &subclass_methods->entries()[i]; entry->key)
-                    subclass->methods.set(entry->key, entry->value);
-            }
-             */
+
             pop(); // Subclass.
             break;
         }
