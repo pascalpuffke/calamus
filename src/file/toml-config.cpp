@@ -26,9 +26,7 @@ Result<TomlConfig> TomlConfigLoader::load(const fs::path& path) {
         return Error { "Path must end with .toml" };
 
     if (!fs::exists(path))
-        return Error {
-            fmt::format("TOML config file does not exist: {}", fs::absolute(path))
-        };
+        return Error::formatted("TOML config file does not exist: {}", fs::absolute(path));
 
     auto config = TomlConfig {};
 
