@@ -162,7 +162,7 @@ static inline void emit(auto first, auto second, auto third) {
     emit(third);
 }
 
-static inline void emit_loop(i32 loop_start) {
+static void emit_loop(i32 loop_start) {
     emit(OpCode::Loop);
 
     const auto offset = current_chunk().count - loop_start + 2;
@@ -172,12 +172,12 @@ static inline void emit_loop(i32 loop_start) {
     emit((offset >> 8) & 0xFF, offset & 0xFF);
 }
 
-static inline i32 emit_jump(OpCode op) {
+static i32 emit_jump(OpCode op) {
     emit(op, 0xFF, 0xFF);
     return current_chunk().count - 2;
 }
 
-static inline void emit_return() {
+static void emit_return() {
     if (current->type == FunctionType::Initializer) {
         emit(OpCode::GetLocal, 0);
     } else {
@@ -187,7 +187,7 @@ static inline void emit_return() {
     emit(OpCode::Return);
 }
 
-static inline u8 make_constant(Value value) {
+static u8 make_constant(Value value) {
     const auto constant = current_chunk().add_constant(value);
     if (constant > std::numeric_limits<u8>::max()) {
         error("Too many constants in one chunk.");
@@ -197,11 +197,11 @@ static inline u8 make_constant(Value value) {
     return static_cast<u8>(constant);
 }
 
-static inline void emit_constant(Value value) {
+static void emit_constant(Value value) {
     emit(OpCode::Constant, make_constant(value));
 }
 
-static inline void patch_jump(i32 offset) {
+static void patch_jump(i32 offset) {
     // -2 to adjust for the bytecode for the jump offset itself.
     const auto jump = current_chunk().count - offset - 2;
     if (jump > std::numeric_limits<u16>::max())
@@ -249,10 +249,11 @@ static ObjFunction* end_compiler() {
     return function;
 }
 
-static inline void begin_scope() {
+static void begin_scope() {
     current->scope_depth++;
 }
-static inline void end_scope() {
+
+static void end_scope() {
     current->scope_depth--;
 
     while (current->local_count > 0 && current->locals[current->local_count - 1].depth > current->scope_depth) {
@@ -264,18 +265,18 @@ static inline void end_scope() {
     }
 }
 
-static inline void expression();
-static inline void statement();
-static inline void declaration();
+static void expression();
+static void statement();
+static void declaration();
 static inline const ParseRule& get_rule(TokenType);
-static inline void parse_precedence(Precedence);
+static void parse_precedence(Precedence);
 static inline u8 identifier_constant(const Token&);
-static inline i32 resolve_local(const InternalCompiler&, const Token&);
-static inline i32 resolve_upvalue(InternalCompiler&, const Token&);
-static inline u8 argument_list();
-static inline void and_(bool);
+static i32 resolve_local(const InternalCompiler&, const Token&);
+static i32 resolve_upvalue(InternalCompiler&, const Token&);
+static u8 argument_list();
+static void and_(bool);
 
-static inline void binary([[maybe_unused]] bool) {
+static void binary([[maybe_unused]] bool) {
     const auto operator_type = parser.previous.type;
     const auto& rule = get_rule(operator_type);
     parse_precedence(static_cast<Precedence>(static_cast<i32>(rule.precedence) + 1));
@@ -316,12 +317,12 @@ static inline void binary([[maybe_unused]] bool) {
     }
 }
 
-static inline void call([[maybe_unused]] bool) {
+static void call([[maybe_unused]] bool) {
     const auto arg_count = argument_list();
     emit(OpCode::Call, arg_count);
 }
 
-static inline void dot(bool can_assign) {
+static void dot(bool can_assign) {
     consume(TokenType::Identifier, "Expect property name after '.'.");
     const auto name = identifier_constant(parser.previous);
 
@@ -336,7 +337,7 @@ static inline void dot(bool can_assign) {
     }
 }
 
-static inline void literal([[maybe_unused]] bool) {
+static void literal([[maybe_unused]] bool) {
     switch (parser.previous.type) {
     case TokenType::False:
         emit(OpCode::False);
@@ -352,17 +353,17 @@ static inline void literal([[maybe_unused]] bool) {
     }
 }
 
-static inline void grouping([[maybe_unused]] bool) {
+static void grouping([[maybe_unused]] bool) {
     expression();
     consume(TokenType::RightParen, "Expect ')' after expression.");
 }
 
-static inline void number([[maybe_unused]] bool) {
+static void number([[maybe_unused]] bool) {
     const auto value = std::strtod(parser.previous.start, nullptr);
     emit_constant(NUMBER_VAL(value));
 }
 
-static inline void or_([[maybe_unused]] bool) {
+static void or_([[maybe_unused]] bool) {
     const auto else_jump = emit_jump(OpCode::JumpIfFalse);
     const auto end_jump = emit_jump(OpCode::Jump);
 
@@ -373,11 +374,11 @@ static inline void or_([[maybe_unused]] bool) {
     patch_jump(end_jump);
 }
 
-static inline void string([[maybe_unused]] bool) {
+static void string([[maybe_unused]] bool) {
     emit_constant(OBJ_VAL(copy_string(parser.previous.start + 1, parser.previous.length - 2)));
 }
 
-static inline void named_variable(Token name, bool can_assign) {
+static void named_variable(Token name, bool can_assign) {
     OpCode get_op, set_op;
     auto arg = resolve_local(*current, name);
     if (arg != -1) {
@@ -400,7 +401,7 @@ static inline void named_variable(Token name, bool can_assign) {
     }
 }
 
-static inline void variable(bool can_assign) {
+static void variable(bool can_assign) {
     named_variable(parser.previous, can_assign);
 }
 
@@ -411,7 +412,7 @@ static inline Token synthetic_token(const char* text) {
     return token;
 }
 
-static inline void super_([[maybe_unused]] bool) {
+static void super_([[maybe_unused]] bool) {
     if (!current_class)
         error("Can't use 'super' outside of a class.");
     else if (!current_class->has_superclass)
@@ -433,7 +434,7 @@ static inline void super_([[maybe_unused]] bool) {
     }
 }
 
-static inline void this_([[maybe_unused]] bool) {
+static void this_([[maybe_unused]] bool) {
     if (!current_class) {
         error("Can't use 'this' outside of a class.");
         return;
@@ -442,7 +443,7 @@ static inline void this_([[maybe_unused]] bool) {
     variable(false);
 }
 
-static inline void unary([[maybe_unused]] bool) {
+static void unary([[maybe_unused]] bool) {
     const auto operator_type = parser.previous.type;
 
     // Compile the operand.
@@ -461,7 +462,7 @@ static inline void unary([[maybe_unused]] bool) {
     }
 }
 
-static inline void import([[maybe_unused]] bool) {
+static void import([[maybe_unused]] bool) {
     consume(TokenType::Identifier, "Expect module name after 'import'.");
     const auto name = identifier_constant(parser.previous);
     println("import module: {}", AS_CSTRING(current_chunk().constants.values[name]));
@@ -515,7 +516,7 @@ static std::unordered_map<TokenType, ParseRule> rules_map = {
 };
 // clang-format on
 
-static inline void parse_precedence(Precedence precedence) {
+static void parse_precedence(Precedence precedence) {
     advance();
     const auto prefix_rule = get_rule(parser.previous.type).prefix;
     if (!prefix_rule) {
@@ -546,7 +547,7 @@ static inline bool identifiers_equal(const Token& a, const Token& b) {
     return std::memcmp(a.start, b.start, static_cast<size_t>(a.length)) == 0;
 }
 
-static inline i32 resolve_local(const InternalCompiler& compiler, const Token& name) {
+static i32 resolve_local(const InternalCompiler& compiler, const Token& name) {
     for (auto i = compiler.local_count - 1; i >= 0; i--) {
         const auto& local = compiler.locals[i];
         if (identifiers_equal(name, local.name)) {
@@ -560,7 +561,7 @@ static inline i32 resolve_local(const InternalCompiler& compiler, const Token& n
     return -1;
 }
 
-static inline i32 add_upvalue(InternalCompiler& compiler, u8 index, bool is_local) {
+static i32 add_upvalue(InternalCompiler& compiler, u8 index, bool is_local) {
     const auto upvalue_count = compiler.function->upvalue_count;
 
     for (auto i = 0; i < upvalue_count; i++) {
@@ -579,7 +580,7 @@ static inline i32 add_upvalue(InternalCompiler& compiler, u8 index, bool is_loca
     return compiler.function->upvalue_count++;
 }
 
-static inline i32 resolve_upvalue(InternalCompiler& compiler, const Token& name) {
+static i32 resolve_upvalue(InternalCompiler& compiler, const Token& name) {
     if (!compiler.enclosing)
         return -1;
 
@@ -596,7 +597,7 @@ static inline i32 resolve_upvalue(InternalCompiler& compiler, const Token& name)
     return -1;
 }
 
-static inline void add_local(Token name) {
+static void add_local(Token name) {
     if (current->local_count == std::numeric_limits<u8>::max() + 1) {
         error("Too many local variables in function.");
         return;
@@ -608,7 +609,7 @@ static inline void add_local(Token name) {
     local->is_captured = false;
 }
 
-static inline void declare_variable() {
+static void declare_variable() {
     if (current->scope_depth == 0)
         return;
 
@@ -626,7 +627,7 @@ static inline void declare_variable() {
     add_local(name);
 }
 
-static inline u8 parse_variable(const char* error_message) {
+static u8 parse_variable(const char* error_message) {
     consume(TokenType::Identifier, error_message);
 
     declare_variable();
@@ -651,7 +652,7 @@ static inline void define_variable(u8 global) {
     emit(OpCode::DefineGlobal, global);
 }
 
-static inline u8 argument_list() {
+static u8 argument_list() {
     u8 arg_count = 0;
     if (!check(TokenType::RightParen)) {
         do {
@@ -664,7 +665,7 @@ static inline u8 argument_list() {
     return arg_count;
 }
 
-static inline void and_([[maybe_unused]] bool) {
+static void and_([[maybe_unused]] bool) {
     const auto end_jump = emit_jump(OpCode::JumpIfFalse);
 
     emit(OpCode::Pop);
@@ -676,7 +677,7 @@ static inline const ParseRule& get_rule(TokenType type) {
     return rules_map[type];
 }
 
-static inline void expression() {
+static void expression() {
     // Compile the operand.
     parse_precedence(Precedence::Assignment);
 }
@@ -689,7 +690,7 @@ static inline void block() {
     consume(TokenType::RightBrace, "Expect '}' after block.");
 }
 
-static inline void function(FunctionType type) {
+static void function(FunctionType type) {
     InternalCompiler compiler {};
     init_compiler(compiler, type);
     begin_scope();
@@ -716,7 +717,7 @@ static inline void function(FunctionType type) {
     }
 }
 
-static inline void method() {
+static void method() {
     consume(TokenType::Identifier, "Expect method name.");
     const auto constant = identifier_constant(parser.previous);
 
@@ -728,7 +729,7 @@ static inline void method() {
     emit(OpCode::Method, constant);
 }
 
-static inline void class_declaration() {
+static void class_declaration() {
     consume(TokenType::Identifier, "Expect class name.");
     auto class_name = parser.previous;
     const auto name_constant = identifier_constant(parser.previous);
@@ -773,14 +774,14 @@ static inline void class_declaration() {
     current_class = current_class->enclosing;
 }
 
-static inline void fun_declaration() {
+static void fun_declaration() {
     const auto global = parse_variable("Expect function name.");
     mark_initialized();
     function(FunctionType::Function);
     define_variable(global);
 }
 
-static inline void var_declaration() {
+static void var_declaration() {
     const auto global = parse_variable("Expect variable name.");
 
     if (match(TokenType::Equal))
@@ -792,13 +793,13 @@ static inline void var_declaration() {
     define_variable(global);
 }
 
-static inline void print_statement() {
+static void print_statement() {
     expression();
     consume(TokenType::Semicolon, "Expect ';' after value.");
     emit(OpCode::Print);
 }
 
-static inline void return_statement() {
+static void return_statement() {
     if (current->type == FunctionType::Script)
         error("Can't return from top-level code.");
 
@@ -814,7 +815,7 @@ static inline void return_statement() {
     }
 }
 
-static inline void while_statement() {
+static void while_statement() {
     const auto loop_start = current_chunk().count;
     consume(TokenType::LeftParen, "Expect '(' after 'while'.");
     expression();
@@ -828,7 +829,7 @@ static inline void while_statement() {
     emit(OpCode::Pop);
 }
 
-static inline void synchronize() {
+static void synchronize() {
     parser.panic_mode = false;
 
     while (parser.current.type != TokenType::Eof) {
@@ -852,13 +853,13 @@ static inline void synchronize() {
     }
 }
 
-static inline void expression_statement() {
+static void expression_statement() {
     expression();
     consume(TokenType::Semicolon, "Expect ';' after expression.");
     emit(OpCode::Pop);
 }
 
-static inline void for_statement() {
+static void for_statement() {
     begin_scope();
     consume(TokenType::LeftParen, "Expect '(' after 'for'.");
 
@@ -903,7 +904,7 @@ static inline void for_statement() {
     end_scope();
 }
 
-static inline void if_statement() {
+static void if_statement() {
     consume(TokenType::LeftParen, "Expect '(' after 'if'.");
     expression();
     consume(TokenType::RightParen, "Expect ')' after condition.");
@@ -922,7 +923,7 @@ static inline void if_statement() {
     patch_jump(else_jump);
 }
 
-static inline void declaration() {
+static void declaration() {
     if (match(TokenType::Class)) {
         class_declaration();
     } else if (match(TokenType::Fun)) {
@@ -937,7 +938,7 @@ static inline void declaration() {
         synchronize();
 }
 
-static inline void statement() {
+static void statement() {
     if (match(TokenType::Print)) {
         print_statement();
     } else if (match(TokenType::LeftBrace)) {
