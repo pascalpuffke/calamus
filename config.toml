@@ -1,0 +1,16 @@
+[window]
+width = 640
+height = 480
+# Limit FPS to current monitor refresh rate
+vsync = true
+# Limit FPS to target_fps value if vsync is disabled
+limit_fps = true
+# Target FPS if both limit_fps and vsync are false
+target_fps = 60
+
+[debug]
+# Needs to be true for any debug options to work.
+enabled = true
+show_fps = true
+draw_ui_bounds = true
+raylib_log = true
