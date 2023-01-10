@@ -1,0 +1,11 @@
+---
+BasedOnStyle: WebKit
+IndentWidth: 4
+---
+Language: Cpp
+
+# It took me way too long to figure out this key needs to be
+# set to 'Custom' before clang-format respects BraceWrapping
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterFunction: false
