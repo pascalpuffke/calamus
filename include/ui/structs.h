@@ -51,9 +51,57 @@ struct BasicColor {
     constexpr BasicColor& operator=(const BasicColor&) = default;
     constexpr BasicColor& operator=(BasicColor&&) noexcept = default;
 
+    // These operators are over/underflow-safe.
+    constexpr auto operator+(const BasicColor<T>& other) const {
+        constexpr auto max = std::numeric_limits<T>::max();
+        return BasicColor<T> {
+            check_overflow(max, r, other.r),
+            check_overflow(max, g, other.g),
+            check_overflow(max, b, other.b),
+            check_overflow(max, a, other.a)
+        };
+    }
+    constexpr auto operator-(const BasicColor<T>& other) const {
+        constexpr auto min = std::numeric_limits<T>::min();
+        return BasicColor<T> {
+            check_underflow(min, r, other.r),
+            check_underflow(min, g, other.g),
+            check_underflow(min, b, other.b),
+            check_underflow(min, a, other.a)
+        };
+    }
+    constexpr auto operator+=(const BasicColor<T>& other) {
+        constexpr auto max = std::numeric_limits<T>::max();
+        r = check_overflow(max, r, other.r);
+        g = check_overflow(max, g, other.g);
+        b = check_overflow(max, b, other.b);
+        a = check_overflow(max, a, other.a);
+        return *this;
+    }
+    constexpr auto operator-=(const BasicColor<T>& other) {
+        constexpr auto min = std::numeric_limits<T>::min();
+        r = check_underflow(min, r, other.r);
+        g = check_underflow(min, g, other.g);
+        b = check_underflow(min, b, other.b);
+        a = check_underflow(min, a, other.a);
+        return *this;
+    }
+
     constexpr auto operator<=>(const BasicColor&) const = default;
 
 private:
+    [[nodiscard]] constexpr T check_overflow(T max, T first, T second) const {
+        if (second > (max - first))
+            return max;
+        return first + second;
+    }
+
+    [[nodiscard]] constexpr T check_underflow(T min, T first, T second) const {
+        if (min > (first - second))
+            return min;
+        return first - second;
+    }
+
     constexpr BasicColor(T n_r, T n_g, T n_b, T n_a)
         : r(n_r)
         , g(n_g)
@@ -97,12 +145,10 @@ struct Position {
     constexpr Position& operator=(const Position&) = default;
     constexpr Position& operator=(Position&&) noexcept = default;
 
-    constexpr auto operator+(const Position& other) const {
-        return Position { x + other.x, y + other.y };
-    }
-    constexpr auto operator-(const Position& other) const {
-        return Position { x - other.x, y - other.y };
-    }
+    constexpr auto operator+(const Position& other) const { return Position { x + other.x, y + other.y }; }
+    constexpr auto operator-(const Position& other) const { return Position { x - other.x, y - other.y }; }
+    constexpr auto operator*(T other) const { return Position { x * other, y * other }; }
+    constexpr auto operator/(T other) const { return Position { x / other, y / other }; }
     constexpr auto operator+=(const Position& other) {
         x += other.x;
         y += other.y;
@@ -114,7 +160,6 @@ struct Position {
         return *this;
     }
 
-    // C++20 my beloved
     constexpr auto operator<=>(const Position&) const = default;
 };
 
@@ -143,12 +188,20 @@ struct Size {
     constexpr auto operator-(const Size& other) const { return Size { width - other.width, height - other.height }; }
     constexpr auto operator*(T other) const { return Size { width * other, height * other }; }
     constexpr auto operator/(T other) const { return Size { width / other, height / other }; }
+    constexpr auto operator+=(const Size& other) {
+        width += other.width;
+        height += other.height;
+        return *this;
+    }
+    constexpr auto operator-=(const Size& other) {
+        width -= other.width;
+        height -= other.height;
+        return *this;
+    }
 
     constexpr auto operator<=>(const Size&) const = default;
 
-    constexpr auto to_position() const {
-        return Position<T> { width, height };
-    }
+    constexpr auto to_position() const { return Position<T> { width, height }; }
 };
 
 template <Arithmetic T = i32>
@@ -178,7 +231,37 @@ struct Rectangle {
     constexpr Rectangle& operator=(const Rectangle&) = default;
     constexpr Rectangle& operator=(Rectangle&&) noexcept = default;
 
+    constexpr auto operator+(const Rectangle& other) const {
+        return Rectangle { x + other.x, y + other.y, width + other.width, height + other.height };
+    }
+    constexpr auto operator-(const Rectangle& other) const {
+        return Rectangle { x - other.x, y - other.y, width - other.width, height - other.height };
+    }
+    constexpr auto operator*(const Rectangle& other) const {
+        return Rectangle { x * other.x, y * other.y, width * other.width, height * other.height };
+    }
+    constexpr auto operator/(const Rectangle& other) const {
+        return Rectangle { x / other.x, y / other.y, width / other.width, height / other.height };
+    }
+    constexpr auto operator+=(const Rectangle& other) {
+        x += other.x;
+        y += other.y;
+        width += other.width;
+        height += other.height;
+        return *this;
+    }
+    constexpr auto operator-=(const Rectangle& other) {
+        x -= other.x;
+        y -= other.y;
+        width -= other.width;
+        height -= other.height;
+        return *this;
+    }
+
     constexpr auto operator<=>(const Rectangle&) const = default;
+
+    constexpr auto to_position() const { return Position { x, y }; }
+    constexpr auto to_size() const { return Position { width, height }; }
 };
 
 using IntPosition = Position<i32>;
