@@ -31,7 +31,7 @@ void* reallocate(void* pointer, usize old_size, usize new_size) {
 
 static void free_object(Obj* object) {
     if constexpr (DEBUG_LOG_GC) {
-        fmt::print(fmt::fg(fmt::color::gray), "{} free type {}\n", fmt::ptr(object), obj_type_to_string(object->type));
+        print(fmt::fg(fmt::color::gray), "{} free type {}\n", fmt::ptr(object), obj_type_to_string(object->type));
     }
 
     switch (object->type) {
@@ -97,7 +97,7 @@ void mark_object(Obj* object) {
         return;
 
     if constexpr (DEBUG_LOG_GC) {
-        fmt::print("{} mark ", fmt::ptr(object));
+        print("{} mark ", fmt::ptr(object));
         print_value(OBJ_VAL(object));
         println();
     }
@@ -147,7 +147,7 @@ static void mark_array(ValueArray* array) {
 
 static void blacken_object(Obj* object) {
     if constexpr (DEBUG_LOG_GC) {
-        fmt::print("{} blacken ", fmt::ptr(object));
+        print("{} blacken ", fmt::ptr(object));
         print_value(OBJ_VAL(object));
         println();
     }

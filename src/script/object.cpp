@@ -20,7 +20,7 @@ static Obj* allocate_object(size_t size, ObjType type) {
     vm.objects = object;
 
     if constexpr (DEBUG_LOG_GC) {
-        fmt::print(fmt::fg(fmt::color::gray), "{} allocate {} bytes for type {}\n", fmt::ptr(object), size, obj_type_to_string(type));
+        print(fmt::fg(fmt::color::gray), "{} allocate {} bytes for type {}\n", fmt::ptr(object), size, obj_type_to_string(type));
     }
 
     return object;
@@ -127,10 +127,10 @@ ObjString* copy_string(const char* chars, i32 length) {
 static void print_function(ObjFunction* function) {
     if (function->name) {
         const auto name_view = std::string_view { function->name->chars, static_cast<std::string_view::size_type>(function->name->length) };
-        fmt::print("<fn {}>", name_view);
+        print("<fn {}>", name_view);
         return;
     }
-    fmt::print("<script>");
+    print("<script>");
 }
 
 void print_object(Value value) {
@@ -139,7 +139,7 @@ void print_object(Value value) {
         print_function(AS_BOUND_METHOD(value)->method->function);
         break;
     case ObjType::Class:
-        fmt::print("{}", AS_CLASS(value)->name->chars);
+        print(AS_CLASS(value)->name->chars);
         break;
     case ObjType::Closure:
         print_function(AS_CLOSURE(value)->function);
@@ -148,16 +148,16 @@ void print_object(Value value) {
         print_function(AS_FUNCTION(value));
         break;
     case ObjType::Instance:
-        fmt::print("{} instance", AS_INSTANCE(value)->klass->name->chars);
+        print("{} instance", AS_INSTANCE(value)->klass->name->chars);
         break;
     case ObjType::Native:
-        fmt::print("<native fn>");
+        print("<native fn>");
         break;
     case ObjType::String:
-        fmt::print("{}", AS_CSTRING(value));
+        print(AS_CSTRING(value));
         break;
     case ObjType::Upvalue:
-        fmt::print("upvalue");
+        print("upvalue");
         break;
     }
 }

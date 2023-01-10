@@ -244,11 +244,11 @@ static InterpretResult run() {
 
     while (true) {
         if constexpr (DEBUG_TRACE_EXECUTION) {
-            fmt::print("          ");
+            print("          ");
             for (auto* slot = vm.stack; slot < vm.stack_top; slot++) {
-                fmt::print("[ ");
+                print("[ ");
                 print_value(*slot);
-                fmt::print(" ]");
+                print(" ]");
             }
             println();
             disassemble_instruction(&frame->closure->function->chunk, static_cast<i32>(frame->ip - frame->closure->function->chunk.code));
@@ -493,7 +493,7 @@ static InterpretResult run() {
             auto* subclass_methods = &AS_CLASS(superclass)->methods;
             for (const auto& [key, value] : subclass_methods->entries())
                 subclass->methods.set(key, value);
-
+            
             pop(); // Subclass.
             break;
         }

@@ -6,7 +6,7 @@
 namespace calamus::script {
 
 static i32 simple_instruction(const char* name, i32 offset) {
-    println("{}", name);
+    println(name);
     return offset + 1;
 }
 
@@ -25,7 +25,7 @@ static i32 jump_instruction(const char* name, i32 sign, Chunk* chunk, i32 offset
 
 static i32 constant_instruction(const char* name, Chunk* chunk, i32 offset) {
     const auto constant = chunk->code[offset + 1];
-    fmt::print("{:<16} {:4d} '", name, fmt::styled(constant, fmt::fg(fmt::color::gray)));
+    print("{:<16} {:4d} '", name, fmt::styled(constant, fmt::fg(fmt::color::gray)));
     print_value(chunk->constants.values[constant]);
     println("'");
     return offset + 2;
@@ -34,7 +34,7 @@ static i32 constant_instruction(const char* name, Chunk* chunk, i32 offset) {
 static i32 invoke_instruction(const char* name, Chunk* chunk, i32 offset) {
     const auto constant = chunk->code[offset + 1];
     const auto arg_count = chunk->code[offset + 2];
-    fmt::print("{:<16} ({} args) {:4d} '", name, arg_count, constant);
+    print("{:<16} ({} args) {:4d} '", name, arg_count, constant);
     print_value(chunk->constants.values[constant]);
     println("'");
     return offset + 3;
@@ -49,11 +49,11 @@ void disassemble_chunk(Chunk* chunk, const char* name) {
 }
 
 i32 disassemble_instruction(Chunk* chunk, i32 offset) {
-    fmt::print("{:>04} ", fmt::styled(offset, fmt::fg(fmt::color::gray)));
+    print("{:>04} ", fmt::styled(offset, fmt::fg(fmt::color::gray)));
     if (offset > 0 && chunk->lines[offset] == chunk->lines[offset - 1]) {
-        fmt::print(fmt::fg(fmt::color::light_gray), "   | ");
+        print(fmt::fg(fmt::color::light_gray), "   | ");
     } else {
-        fmt::print("{:>4} ", chunk->lines[offset]);
+        print("{:>4} ", chunk->lines[offset]);
     }
 
     const auto instruction = static_cast<OpCode>(chunk->code[offset]);
@@ -123,7 +123,7 @@ i32 disassemble_instruction(Chunk* chunk, i32 offset) {
     case OpCode::Closure: {
         offset++;
         const auto constant = chunk->code[offset++];
-        fmt::print("{:<16} {:4d} '", "Closure", fmt::styled(constant, fmt::fg(fmt::color::gray)));
+        print("{:<16} {:4d} '", "Closure", fmt::styled(constant, fmt::fg(fmt::color::gray)));
         print_value(chunk->constants.values[constant]);
         println();
         ObjFunction* function = AS_FUNCTION(chunk->constants.values[constant]);
