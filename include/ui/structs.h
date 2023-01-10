@@ -103,6 +103,16 @@ struct Position {
     constexpr auto operator-(const Position& other) const {
         return Position { x - other.x, y - other.y };
     }
+    constexpr auto operator+=(const Position& other) {
+        x += other.x;
+        y += other.y;
+        return *this;
+    }
+    constexpr auto operator-=(const Position& other) {
+        x -= other.x;
+        y -= other.y;
+        return *this;
+    }
 
     // C++20 my beloved
     constexpr auto operator<=>(const Position&) const = default;
@@ -135,6 +145,10 @@ struct Size {
     constexpr auto operator/(T other) const { return Size { width / other, height / other }; }
 
     constexpr auto operator<=>(const Size&) const = default;
+
+    constexpr auto to_position() const {
+        return Position<T> { width, height };
+    }
 };
 
 template <Arithmetic T = i32>
