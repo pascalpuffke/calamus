@@ -7,11 +7,6 @@
 
 namespace calamus::script {
 
-struct Entry {
-    ObjString* key;
-    Value value;
-};
-
 class Table {
 public:
     void reset();
