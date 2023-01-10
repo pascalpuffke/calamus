@@ -76,37 +76,63 @@ public:
     constexpr Result(Result&& other) noexcept = default;
     constexpr Result(const Result& other) = default;
 
-    [[nodiscard]] constexpr bool has_value() const { return m_value.has_value(); }
-    [[nodiscard]] constexpr bool has_error() const { return m_error.has_value(); }
+    [[nodiscard]] constexpr bool has_value() const {
+        return m_value.has_value();
+    }
+    [[nodiscard]] constexpr bool has_error() const {
+        return m_error.has_value();
+    }
 
-    [[nodiscard]] constexpr ValueType& value() {
-        ASSERT_MSG(!has_error(), "Result has no value");
+    [[nodiscard]] constexpr ValueType& value() & {
+        ASSERT_MSG(has_value(), "Result has no value");
         return m_value.value();
     }
 
-    [[nodiscard]] constexpr ValueType& value_or(ValueType&& default_value) {
+    [[nodiscard]] constexpr const ValueType& value() const& {
+        ASSERT_MSG(has_value(), "Result has no value");
+        return m_value.value();
+    }
+
+    /**
+     * This value releases ownership of the underlying Value.
+     * After calling this function, has_value() will return false and any further operations are undefined behaviour.
+     */
+    [[nodiscard]] constexpr ValueType release_value() {
+        ASSERT_MSG(has_value(), "Result has no value");
+        auto moved = std::move(m_value.value());
+        value().~ValueType();
+        m_value.reset();
+        return moved;
+    }
+
+    template <typename U>
+        requires std::is_convertible_v<U&&, ValueType> && std::is_copy_constructible_v<ValueType>
+    [[nodiscard]] constexpr ValueType value_or(U&& default_value) const& {
         if (has_error())
             return default_value;
         return m_value.value();
     }
 
-    [[nodiscard]] constexpr ErrorType& error() {
-        ASSERT_MSG(has_error(), "Result has no error");
-        return m_error.value();
-    }
-
-    template <typename Function>
+    template <std::invocable Function>
+        requires std::is_same_v<std::remove_cvref_t<std::invoke_result_t<Function>>, ValueType>
     constexpr ValueType value_or_else(Function&& func) {
         if (has_value())
             return std::move(value());
         return std::move(func());
     }
 
+    [[nodiscard]] constexpr const ErrorType& error() const& {
+        ASSERT_MSG(has_error(), "Result has no error");
+        return m_error.value();
+    }
+    // I don't think it makes much sense to create more error accessors than const&
+
     template <typename ValueFn, typename ErrorFn>
     constexpr void match(ValueFn&& on_value, ErrorFn&& on_error) {
         if (has_value())
             on_value(value());
-        on_error(error());
+        else
+            on_error(error());
     }
 
     [[nodiscard]] constexpr ValueType& operator*() {
