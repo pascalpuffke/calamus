@@ -152,7 +152,7 @@ void register_screens() {
 
 void register_textures() {
     auto* manager = VERIFY_PTR(state.texture_manager);
-    manager->load_tilemap("../tileset.png", "world", 16);
+    manager->load_tilemap("../res/tilemap.png", "world", 16);
 }
 
 }
