@@ -17,69 +17,12 @@ Button::Button(std::shared_ptr<Label>& label, IntPosition position, IntSize size
 IntPosition Button::compute_label_position() {
     if (!m_label)
         return {};
-    const auto margins = Size { 10, 0 };
+    const auto margins = Size { 0, 0 };
     const auto usable_size = m_size - (margins * 2);
     const auto label_size = m_label->size();
     auto label_offset = m_label->position();
-
-    switch (m_label_alignment) {
-    case Alignment::Center: {
-        /**
-         * [            ]
-         * [   dingus   ]
-         * [            ]
-         */
-        label_offset.x = (usable_size.width - label_size.width) / 2;
-        label_offset.y = (usable_size.height - label_size.height) / 2;
-    } break;
-    case Alignment::CenterLeft: {
-        /**
-         * [            ]
-         * [ dingus     ]
-         * [            ]
-         */
-        label_offset.x = margins.width;
-        label_offset.y = (usable_size.height - label_size.height) / 2;
-    } break;
-    case Alignment::CenterRight: {
-        /**
-         * [            ]
-         * [     dingus ]
-         * [            ]
-         */
-        label_offset.x = usable_size.width - label_size.width;
-        label_offset.y = (usable_size.height - label_size.height) / 2;
-    } break;
-    case Alignment::TopCenter: {
-        /**
-         * [   dingus   ]
-         * [            ]
-         * [            ]
-         */
-        label_offset.x = (usable_size.width - label_size.width) / 2;
-    } break;
-    case Alignment::TopLeft: {
-        /**
-         * [ dingus     ]
-         * [            ]
-         * [            ]
-         */
-    } break;
-    case Alignment::TopRight: {
-        /**
-         * [     dingus ]
-         * [            ]
-         * [            ]
-         */
-        label_offset.x = usable_size.width - label_size.width;
-    } break;
-    case Alignment::BottomCenter: {
-    } break;
-    case Alignment::BottomLeft: {
-    } break;
-    case Alignment::BottomRight: {
-    } break;
-    }
+    label_offset += calculate_offset_for_alignment(m_label_alignment, usable_size, label_size);
+    label_offset += margins.to_position();
 
     return label_offset;
 }
