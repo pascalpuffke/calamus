@@ -261,7 +261,7 @@ struct Rectangle {
     constexpr auto operator<=>(const Rectangle&) const = default;
 
     constexpr auto to_position() const { return Position { x, y }; }
-    constexpr auto to_size() const { return Position { width, height }; }
+    constexpr auto to_size() const { return Size { width, height }; }
 };
 
 using IntPosition = Position<i32>;
