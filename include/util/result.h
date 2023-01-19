@@ -165,8 +165,12 @@ public:
         : m_error(std::move(error)) {
     }
 
-    constexpr Result(Result&& other) noexcept = default;
-    constexpr Result(const Result& other) = default;
+    constexpr ~Result() = default;
+
+    constexpr Result(Result&&) noexcept = default;
+    constexpr Result(const Result&) = default;
+    constexpr Result& operator=(Result&&) noexcept = default;
+    constexpr Result& operator=(const Result&) = default;
 
     static constexpr Result success() {
         return Result<void> {};
@@ -174,10 +178,10 @@ public:
 
     constexpr void value() { }
 
-    [[nodiscard]] constexpr bool has_value() const { return !m_error.has_value(); }
+    [[nodiscard]] constexpr bool has_value() const { return false; }
     [[nodiscard]] constexpr bool has_error() const { return m_error.has_value(); }
 
-    [[nodiscard]] ErrorType& error() {
+    [[nodiscard]] constexpr const ErrorType& error() const& {
         ASSERT_MSG(has_error(), "Result has no error");
         return m_error.value();
     }
