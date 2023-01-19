@@ -6,6 +6,9 @@
 
 namespace calamus {
 
+template <typename F, typename T>
+concept SameInvokeResult = std::is_same_v<std::remove_cvref_t<std::invoke_result_t<F>>, T>;
+
 // Errors need to be constructed explicitly.
 //     Result<int> return_error() {
 //         return Error { "Something went wrong" }; // please never write error messages like this
@@ -73,8 +76,12 @@ public:
         : m_error(std::move(error)) {
     }
 
-    constexpr Result(Result&& other) noexcept = default;
-    constexpr Result(const Result& other) = default;
+    constexpr ~Result() = default;
+
+    constexpr Result(Result&&) noexcept = default;
+    constexpr Result(const Result&) = default;
+    constexpr Result& operator=(Result&&) noexcept = default;
+    constexpr Result& operator=(const Result&) = default;
 
     [[nodiscard]] constexpr bool has_value() const {
         return m_value.has_value();
@@ -114,7 +121,7 @@ public:
     }
 
     template <std::invocable Function>
-        requires std::is_same_v<std::remove_cvref_t<std::invoke_result_t<Function>>, ValueType>
+        requires SameInvokeResult<Function, ValueType>
     constexpr ValueType value_or_else(Function&& func) {
         if (has_value())
             return std::move(value());
