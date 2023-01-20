@@ -237,11 +237,11 @@ struct Rectangle {
     constexpr auto operator-(const Rectangle& other) const {
         return Rectangle { x - other.x, y - other.y, width - other.width, height - other.height };
     }
-    constexpr auto operator*(const Rectangle& other) const {
-        return Rectangle { x * other.x, y * other.y, width * other.width, height * other.height };
+    constexpr auto operator*(T other) const {
+        return Rectangle { x * other, y * other, width * other, height * other };
     }
-    constexpr auto operator/(const Rectangle& other) const {
-        return Rectangle { x / other.x, y / other.y, width / other.width, height / other.height };
+    constexpr auto operator/(T other) const {
+        return Rectangle { x / other, y / other, width / other, height / other };
     }
     constexpr auto operator+=(const Rectangle& other) {
         x += other.x;
