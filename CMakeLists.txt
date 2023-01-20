@@ -44,16 +44,21 @@ if (NOT (EXISTS ${CPM_DOWNLOAD_LOCATION}))
 endif ()
 include(${CPM_DOWNLOAD_LOCATION})
 
-set(SOURCES
-        src/main.cpp
+set(MAIN_SOURCES
         src/file/toml-config.cpp
+        src/graphics/image.cpp
         src/graphics/renderer.cpp
+        src/graphics/texture.cpp
         src/graphics/window.cpp
-        src/resources/textures.cpp
+        src/main.cpp
         src/resources/fonts.cpp
+        src/resources/textures.cpp
         src/ui/ui_button.cpp
         src/ui/ui_label.cpp
         src/ui/ui_screen.cpp
+        src/util/raylib/raylib_wrapper.cpp)
+
+set(SCRIPT_SOURCES
         src/script/chunk.cpp
         src/script/compiler.cpp
         src/script/debug.cpp
@@ -64,10 +69,19 @@ set(SOURCES
         src/script/value.cpp
         src/script/vm.cpp)
 
+set(TEST_SOURCES
+        test/script/test_basic.cpp
+        test/test_basiccolor.cpp
+        test/test_position.cpp
+        test/test_rect.cpp
+        test/test_result.cpp
+        test/test_size.cpp)
+
 CPMAddPackage(NAME fmt VERSION 9.1.0 GITHUB_REPOSITORY fmtlib/fmt GIT_TAG 9.1.0)
 CPMAddPackage(NAME cxxopts VERSION 3.0.0 GITHUB_REPOSITORY jarro2783/cxxopts GIT_TAG v3.0.0)
 CPMAddPackage(NAME tomlplusplus VERSION 3.2.0 GITHUB_REPOSITORY marzer/tomlplusplus GIT_TAG v3.2.0)
 CPMAddPackage(NAME raylib VERSION 4.2.0 GITHUB_REPOSITORY raysan5/raylib GIT_TAG 4.2.0)
+CPMAddPackage(NAME googletest VERSION 1.13.0 GITHUB_REPOSITORY google/googletest GIT_TAG v1.13.0)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/lib)
@@ -77,8 +91,14 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/_deps/cxxopts-src/include)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/_deps/fmt-src/include)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/_deps/tomlplusplus-src/include)
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_executable(${PROJECT_NAME} ${MAIN_SOURCES} ${SCRIPT_SOURCES})
+add_executable(${PROJECT_NAME}_test ${TEST_SOURCES} ${SCRIPT_SOURCES})
 target_link_libraries(${PROJECT_NAME} fmt::fmt raylib)
+target_link_libraries(${PROJECT_NAME}_test fmt::fmt raylib GTest::gtest_main)
+
+enable_testing()
+include(GoogleTest)
+gtest_discover_tests(${PROJECT_NAME}_test)
 
 if (APPLE)
     target_link_libraries(${PROJECT_NAME} "-framework IOKit")
