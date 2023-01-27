@@ -193,3 +193,11 @@ private:
 }
 
 FORMATTER(calamus::Error, "{}", value.message())
+
+// ✨ Inspired by SerenityOS ✨
+#define TRY(expr) ({                           \
+    auto __try_result = (expr);                \
+    if (__try_result.has_error()) [[unlikely]] \
+        return __try_result.error();           \
+    __try_result.release_value();              \
+})
