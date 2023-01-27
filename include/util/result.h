@@ -101,7 +101,7 @@ public:
     }
 
     /**
-     * This value releases ownership of the underlying Value.
+     * This function releases ownership of the underlying Value.
      * After calling this function, has_value() will return false and any further operations are undefined behaviour.
      */
     [[nodiscard]] constexpr ValueType release_value() {
@@ -192,4 +192,4 @@ private:
 
 }
 
-FORMATTER(calamus::Error, "Error(message='{}')", value.message())
+FORMATTER(calamus::Error, "{}", value.message())
