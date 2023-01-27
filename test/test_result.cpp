@@ -83,3 +83,21 @@ TEST(Result, ReleaseValue) {
     ASSERT_FALSE(result.has_error());
     EXPECT_EQ(released, "According to all known laws of aviation, there is no way a bee should be able to fly.");
 }
+
+TEST(Result, TryMacro) {
+    auto positive_result = Result<i32> { 2 };
+    auto negative_result = Result<i32> { Error { "henlo" } };
+
+    const auto some_function = [&]() -> Result<i32> {
+        [[maybe_unused]] const auto value = TRY(positive_result);
+
+        [[maybe_unused]] const auto return_here = TRY(negative_result);
+        // The above line will cause an early return as negative_result holds an Error.
+
+        return Result<i32> { 1 };
+    };
+
+    auto should_be_error = some_function();
+    ASSERT_TRUE(should_be_error.has_error());
+    ASSERT_EQ(should_be_error.error(), Error { "henlo" });
+}
