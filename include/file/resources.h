@@ -34,4 +34,4 @@ private:
 
 }
 
-FORMATTER(calamus::TextureResource, "TextureResource(path={}, name='{}', size={}, tiled={}, tile_size={}, tile_names={})", value.path, value.name, value.size, value.tiled, value.tile_size, value.tile_names.has_value())
+FORMATTER(calamus::TextureResource, "TextureResource(path={}, name='{}', size={}, tiled={}, tile_size={}, tile_names={})", value.path, value.name, value.size, value.tiled, value.tile_size, value.tile_names.value_or(std::vector<std::string> {}))

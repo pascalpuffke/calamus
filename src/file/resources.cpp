@@ -73,6 +73,15 @@ Result<std::vector<TextureResource>> ResourceLoader::find_textures() {
             }
 
             resource.tiled = tiled.as_boolean()->get();
+        } else {
+            // If no 'tiled' field is present, there's no need to go any further.
+            textures.emplace_back(std::move(resource));
+            continue;
+        }
+        // Same applies if 'tiled' is present, but false.
+        if (!resource.tiled) {
+            textures.emplace_back(std::move(resource));
+            continue;
         }
 
         if (const auto& tile_width = resource_toml["texture"]["tile_width"]; tile_width) {
@@ -100,31 +109,41 @@ Result<std::vector<TextureResource>> ResourceLoader::find_textures() {
             }
 
             const auto* array = VERIFY_PTR(tile_names.as_array());
-            if (array->empty()) {
-                LOG_WARNING("'tile_names' field in description for texture '{}' is empty, using default names", resource_name)
-                continue;
+            const auto max_size = static_cast<size_t>((resource.size.width / resource.tile_size.width) * (resource.size.height / resource.tile_size.height));
+
+            if (array->size() > max_size) {
+                LOG_WARNING("'tile_names' field in description for texture '{}' contains more entries than there are tiles ({}, max {})", resource_name, array->size(), max_size)
             }
 
-            const auto max_size = static_cast<size_t>((resource.size.width / resource.tile_size.width) * (resource.size.height / resource.tile_size.height));
-            if (array->size() > max_size)
-                LOG_WARNING("'tile_names' field in description for texture '{}' contains more entries than there are tiles ({}, max {})", resource_name, array->size(), max_size)
-
             auto tile_names_vector = std::vector<std::string> {};
-            auto tile_name_count = size_t { 0 };
             tile_names_vector.reserve(max_size);
 
-            for (const auto& value : *array) {
-                if (!value.is_string()) {
-                    LOG_WARNING("'tile_names' field in description for texture '{}' contains entries which are not strings", resource_name)
-                    break;
-                }
+            if (array->empty()) {
+                LOG_WARNING("'tile_names' field in description for texture '{}' is empty, using default names", resource_name)
+                for (size_t i = 0; i < max_size; i++) {
+                    auto generated_name = fmt::format("{}_{}", resource.name, i);
 
-                if (++tile_name_count == max_size)
-                    break;
-                tile_names_vector.emplace_back(value.as_string()->get());
+                    tile_names_vector.emplace_back(std::move(generated_name));
+                }
+            } else {
+                auto tile_name_count = size_t { 0 };
+
+                for (const auto& value : *array) {
+                    if (!value.is_string()) {
+                        LOG_WARNING("'tile_names' field in description for texture '{}' contains entries which are not strings", resource_name)
+                        break;
+                    }
+
+                    if (++tile_name_count == max_size)
+                        break;
+                    tile_names_vector.emplace_back(value.as_string()->get());
+                }
             }
 
             resource.tile_names = std::move(tile_names_vector);
+        } else {
+            LOG_WARNING("no 'tile_names' field in description for texture '{}'", resource_name)
+            continue;
         }
 
         textures.emplace_back(std::move(resource));
