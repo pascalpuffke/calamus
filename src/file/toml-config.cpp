@@ -19,6 +19,7 @@ static constexpr TomlConfig default_config = {
     .show_fps = false,
     .draw_ui_bounds = false,
     .raylib_log = false,
+    .resources_root = "../res",
 };
 
 Result<TomlConfig> TomlConfigLoader::load(const fs::path& path) {
@@ -45,6 +46,8 @@ Result<TomlConfig> TomlConfigLoader::load(const fs::path& path) {
         TOML_CONFIG_LOAD_FIELD(debug, show_fps);
         TOML_CONFIG_LOAD_FIELD(debug, draw_ui_bounds);
         TOML_CONFIG_LOAD_FIELD(debug, raylib_log);
+
+        TOML_CONFIG_LOAD_FIELD(resources, resources_root);
 #undef TOML_CONFIG_LOAD_FIELD
 
         // Disable all debug features if debug is disabled

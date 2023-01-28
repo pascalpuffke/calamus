@@ -16,6 +16,7 @@ struct TomlConfig {
     bool show_fps;
     bool draw_ui_bounds;
     bool raylib_log;
+    std::string resources_root;
 };
 
 class TomlConfigLoader final {

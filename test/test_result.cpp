@@ -100,4 +100,8 @@ TEST(Result, TryMacro) {
     auto should_be_error = some_function();
     ASSERT_TRUE(should_be_error.has_error());
     ASSERT_EQ(should_be_error.error(), Error { "henlo" });
+
+    // TRY releases (moves) positive values, but because we don't pass in a Result-returning expression,
+    // it copies the Result internally (auto __try_result = (expr)) and our original positive_result is unaffected.
+    ASSERT_TRUE(positive_result.has_value());
 }

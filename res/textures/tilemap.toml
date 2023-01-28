@@ -1,0 +1,14 @@
+[texture]
+name = "world"
+
+width = 256
+height = 256
+
+# tiled: optional, if true this texture will be handled as a tilemap
+tiled = true
+tile_width = 16
+tile_height = 16
+tile_names = [
+    "grass", # index 0 (offset x=0, y=0)
+    "dirt"   # index 1 (offset x=1, y=0)
+]

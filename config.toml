@@ -8,6 +8,13 @@ limit_fps = true
 # Target FPS if both limit_fps and vsync are false
 target_fps = 60
 
+[resources]
+resources_root = "../res"
+# Textures have to be located in ../res/textures/
+# Sounds have to be located in ../res/sounds/
+# Music files have to be located in ../res/music/
+# Fonts have to be located in ../res/fonts/
+
 [debug]
 # Needs to be true for any debug options to work.
 enabled = true

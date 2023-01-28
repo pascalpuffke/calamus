@@ -1,6 +1,7 @@
 #pragma once
 
 #include <util/result.h>
+#include <filesystem>
 
 struct Font;
 
@@ -23,7 +24,7 @@ public:
     FontManagement& operator=(FontManagement&&) noexcept = delete;
 
     const Font& get_font(FontType);
-    Result<void> load_font(FontType, std::string_view);
+    Result<void> load_font(FontType, const std::filesystem::path&);
 
 private:
     FontManagement();

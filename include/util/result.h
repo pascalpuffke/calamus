@@ -124,8 +124,8 @@ public:
         requires SameInvokeResult<Function, ValueType>
     constexpr ValueType value_or_else(Function&& func) {
         if (has_value())
-            return std::move(value());
-        return std::move(func());
+            return release_value();
+        return func();
     }
 
     [[nodiscard]] constexpr const ErrorType& error() const& {
@@ -176,7 +176,7 @@ public:
         return Result<void> {};
     }
 
-    constexpr void value() { }
+    constexpr void release_value() { }
 
     [[nodiscard]] constexpr bool has_value() const { return false; }
     [[nodiscard]] constexpr bool has_error() const { return m_error.has_value(); }

@@ -1,3 +1,4 @@
+#include <file/resources.h>
 #include <graphics/renderer.h>
 #include <raylib.h>
 #include <resources/fonts.h>
@@ -13,9 +14,6 @@ calamus::State& state = global_state;
 namespace calamus {
 
 constexpr static auto toml_path = std::string_view { "../config.toml" };
-// These use the Open Font License, so I should be fine, right?
-constexpr static auto default_font_path = std::string_view { "../res/fonts/Lato-Regular.ttf" };
-constexpr static auto monospace_font_path = std::string_view { "../res/fonts/TerminusTTF-Bold.ttf" };
 
 // Exclusively for raylib logging
 void log_callback(i32 level, const char* text, va_list args) {
@@ -47,17 +45,6 @@ void log_callback(i32 level, const char* text, va_list args) {
         std::terminate();
     default:
         break;
-    }
-}
-
-void load_fonts() {
-    auto& fonts = Resources::FontManagement::get();
-    // TODO fallbacks?
-    if (auto result = fonts.load_font(Resources::FontType::Regular, default_font_path); result.has_error()) {
-        LOG_ERROR("{}", result.error().message())
-    }
-    if (auto result = fonts.load_font(Resources::FontType::Monospace, monospace_font_path); result.has_error()) {
-        LOG_ERROR("{}", result.error().message())
     }
 }
 
@@ -150,9 +137,26 @@ void register_screens() {
         }));
 }
 
-void register_textures() {
-    auto* manager = VERIFY_PTR(state.texture_manager);
-    manager->load_tilemap("../res/tilemap.png", "world", 16);
+Result<void> load_resources() {
+    auto* texture_manager = VERIFY_PTR(state.texture_manager);
+    auto& font_management = Resources::FontManagement::get();
+
+    const auto loader = std::make_unique<ResourceLoader>(state.config->resources_root);
+
+    auto textures = TRY(loader->find_textures());
+    for (auto& texture_resource : textures) {
+        // TODO Tiled textures
+        auto description = Resources::TextureManager::TextureDescription {
+            std::move(texture_resource.path),
+            std::move(texture_resource.name),
+            texture_resource.size,
+        };
+        TRY(texture_manager->load_texture(std::move(description)));
+    }
+
+    auto fonts = TRY(loader->find_fonts());
+    font_management.load_font(Resources::FontType::Monospace, fonts[Resources::FontType::Monospace]);
+    font_management.load_font(Resources::FontType::Regular, fonts[Resources::FontType::Regular]);
 }
 
 }
@@ -182,12 +186,12 @@ print greeter.get_greeting();
 
     auto config = std::make_unique<TomlConfig>(TomlConfigLoader::load_or_default(toml_path));
     state.config = config.get();
-    auto window = std::make_unique<Window>();
-    state.window = window.get();
-    auto screens = std::make_unique<UI::ScreenManager>();
-    state.screen_manager = screens.get();
     auto textures = std::make_unique<Resources::TextureManager>();
     state.texture_manager = textures.get();
+    auto screens = std::make_unique<UI::ScreenManager>();
+    state.screen_manager = screens.get();
+    auto window = std::make_unique<Window>();
+    state.window = window.get();
     auto renderer = std::make_unique<Renderer>();
     state.renderer = renderer.get();
 
@@ -197,9 +201,13 @@ print greeter.get_greeting();
     window->init();
     window->set_title("dingus");
     renderer->attach(window.get());
-    load_fonts();
+
+    if (auto resources_result = load_resources(); resources_result.has_error()) {
+        LOG_ERROR("Error loading resources: {}", resources_result.error())
+        LOG_ERROR("Proceeding anyway, horrible things might happen.")
+    }
+
     register_screens();
-    register_textures();
     renderer->start();
 
     return 0;

@@ -1,4 +1,6 @@
 #include <filesystem>
+#include <fmt/std.h>
+#include <raylib.h>
 #include <resources/fonts.h>
 #include <unordered_map>
 #include <util/assert.h>
@@ -20,17 +22,16 @@ const Font& FontManagement::get_font(FontType type) {
     return fonts.at(type);
 }
 
-Result<void> FontManagement::load_font(FontType type, std::string_view path) {
+Result<void> FontManagement::load_font(FontType type, const std::filesystem::path& path) {
     if (fonts.contains(type))
         return Error::formatted("Another font is already registered for type {}", std::to_underlying(type));
 
-    const auto fs_path = std::filesystem::path { path };
-    if (!std::filesystem::exists(fs_path))
-        return Error::formatted("File does not exist: '{}'", fs_path.string());
-    if (!std::filesystem::is_regular_file(fs_path))
-        return Error::formatted("Not a regular file: '{}'", fs_path.string());
-    if (const auto extension = fs_path.extension(); extension != ".ttf")
-        return Error::formatted("Invalid file extension: '{}'", extension.string());
+    if (!exists(path))
+        return Error::formatted("File does not exist: {}", path);
+    if (!is_regular_file(path))
+        return Error::formatted("Not a regular file: {}", path);
+    if (const auto extension = path.extension(); extension != ".ttf")
+        return Error::formatted("Invalid file extension: {}", extension);
 
     fonts[type] = wrapper::rtext::load_font(path);
 
