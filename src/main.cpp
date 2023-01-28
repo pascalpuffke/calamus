@@ -157,6 +157,8 @@ Result<void> load_resources() {
     auto fonts = TRY(loader->find_fonts());
     font_management.load_font(Resources::FontType::Monospace, fonts[Resources::FontType::Monospace]);
     font_management.load_font(Resources::FontType::Regular, fonts[Resources::FontType::Regular]);
+
+    return Result<void>::success();
 }
 
 }
