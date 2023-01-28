@@ -3,7 +3,7 @@
 #include <raylib.h>
 #include <resources/fonts.h>
 #include <util/assert.h>
-#include <util/raylib/raylib_extensions.h>
+#include <util/raylib/raylib_wrapper.h>
 #include <utility>
 
 namespace calamus::Resources {

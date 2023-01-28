@@ -1,5 +1,5 @@
 #include <ui/ui_label.h>
-#include <util/raylib/raylib_extensions.h>
+#include <util/raylib/raylib_wrapper.h>
 
 namespace calamus::UI {
 

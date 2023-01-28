@@ -1,5 +1,5 @@
 #include <ui/ui_button.h>
-#include <util/raylib/raylib_extensions.h>
+#include <util/raylib/raylib_wrapper.h>
 
 namespace calamus::UI {
 
@@ -29,7 +29,7 @@ IntPosition Button::compute_label_position() {
 
 void Button::draw() {
     if (m_has_frame)
-        draw_rect_with_outline(rect(), m_hovered ? m_hover_color : m_background_color, m_outline_color);
+        wrapper::draw_rect_with_outline(rect(), m_hovered ? m_hover_color : m_background_color, m_outline_color);
     m_label->draw();
 }
 

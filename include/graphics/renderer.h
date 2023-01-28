@@ -1,12 +1,7 @@
 #pragma once
 
+#include <graphics/camera.h>
 #include <graphics/window.h>
-#include <memory>
-#include <string>
-#include <ui/structs.h>
-#include <util/types.h>
-
-struct Camera2D;
 
 namespace calamus {
 
@@ -35,7 +30,7 @@ private:
     void draw_fps(IntPosition, i32, Color);
 
     Window* m_window { nullptr };
-    std::unique_ptr<Camera2D> m_camera { nullptr };
+    Camera m_camera {};
     u64 m_frame { 0 };
 };
 

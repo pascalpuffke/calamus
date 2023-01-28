@@ -3,7 +3,7 @@
 #include <raylib.h>
 #include <resources/fonts.h>
 #include <resources/textures.h>
-#include <script/vm.h>
+#include <ui/layout/fixed_layout.h>
 #include <ui/ui_button.h>
 #include <ui/ui_screen.h>
 #include <util/common.h>
@@ -54,9 +54,9 @@ void register_screens() {
     auto* window = VERIFY_PTR(state.window);
     auto* manager = VERIFY_PTR(state.screen_manager);
 
-    manager->register_screen(Screen::Game, UI::ScreenLayout::create({}));
+    manager->register_screen(Screen::Game, UI::ScreenLayout::create<UI::FixedLayout>({}));
     manager->register_screen(Screen::Editor,
-        UI::ScreenLayout::create({
+        UI::ScreenLayout::create<UI::FixedLayout>({
             UI::Button::create(
                 UI::Label::create("Center!", font_size),
                 Position { margin, margin },
@@ -92,7 +92,7 @@ void register_screens() {
                 UI::Alignment::CenterRight),
         }));
     manager->register_screen(Screen::Menu,
-        UI::ScreenLayout::create({
+        UI::ScreenLayout::create<UI::FixedLayout>({
             UI::Button::create(
                 UI::Label::create("Start", font_size),
                 Position { margin, margin },
@@ -165,26 +165,6 @@ Result<void> load_resources() {
 
 int main() {
     using namespace calamus;
-    {
-        script::VM::init_vm();
-        const auto source = std::string_view { R"(
-class Greeter {
-    init(entity) {
-        this.entity = entity;
-    }
-    get_greeting() {
-        return "Hello, " + this.entity + "!";
-    }
-}
-
-var greeter = Greeter("penguin");
-print greeter.get_greeting();
-)" };
-        const auto result = script::VM::interpret(source);
-        LOG_WARNING("script result: {}", std::to_underlying(result));
-        ASSERT(result == script::VM::InterpretResult::Ok);
-        script::VM::free_vm();
-    }
 
     auto config = std::make_unique<TomlConfig>(TomlConfigLoader::load_or_default(toml_path));
     state.config = config.get();

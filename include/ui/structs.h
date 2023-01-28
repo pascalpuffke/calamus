@@ -17,6 +17,10 @@ enum class MouseButton : i32 {
     Right = 1,
 };
 
+enum class MouseCursor : i32 {
+    Default = 0,
+};
+
 template <Arithmetic T>
 struct BasicColor {
     T r;

@@ -3,8 +3,7 @@
 #include <raylib.h>
 #include <resources/state.h>
 #include <util/assert.h>
-#include <util/logging.h>
-#include <util/raylib/raylib_extensions.h>
+#include <util/raylib/raylib_wrapper.h>
 
 namespace calamus {
 
@@ -50,7 +49,7 @@ void Window::refresh() {
     }
 
     const auto current_position = m_properties.position;
-    const auto new_position = ca_pos_from(GetWindowPosition());
+    const auto new_position = wrapper::rcore::get_window_position();
     if (new_position != current_position) {
         for (const auto& callback : m_move_callbacks) {
             (*callback)(new_position);

@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <resources/tilemap.h>
 #include <string>
+#include <ui/structs.h>
 #include <unordered_map>
 
 namespace calamus::Resources {
@@ -17,11 +18,27 @@ public:
     TextureManager(TextureManager&&) noexcept = delete;
     TextureManager& operator=(TextureManager&&) noexcept = delete;
 
-    void load_tilemap(const std::filesystem::path& path, const char* name, i32 tile_size);
-    [[nodiscard]] const Tilemap* tilemap(const char*);
+    struct TextureDescription {
+        std::filesystem::path path;
+        std::string name;
+        IntSize size;
+    };
+    [[nodiscard]] Result<void> load_texture(TextureDescription&&);
+
+    struct TilemapDescription {
+        std::filesystem::path path;
+        std::string tilemap_name;
+        IntSize tilemap_size;
+
+        IntSize tile_size;
+        std::vector<std::string> tile_names;
+    };
+    [[nodiscard]] Result<void> load_tilemap(TilemapDescription&&);
+
+    [[nodiscard]] const Texture& texture(std::string_view);
 
 private:
-    std::unique_ptr<std::unordered_map<const char*, Tilemap>> m_tilemaps {};
+    std::unique_ptr<std::unordered_map<std::string, Texture>> m_textures {};
 };
 
 }
