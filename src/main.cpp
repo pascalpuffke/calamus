@@ -143,20 +143,44 @@ Result<void> load_resources() {
 
     const auto loader = std::make_unique<ResourceLoader>(state.config->resources_root);
 
-    auto textures = TRY(loader->find_textures());
-    for (auto& texture_resource : textures) {
-        // TODO Tiled textures
+    const auto load_tilemap = [=](TextureResource& resource) -> Result<void> {
+        if (!resource.tile_names.has_value())
+            return Error { "Can't load tilemap with empty tile_names vector" };
+
+        auto description = Resources::TextureManager::TilemapDescription {
+            std::move(resource.path),
+            std::move(resource.name),
+            resource.size,
+            resource.tile_size,
+            std::move(resource.tile_names.value())
+        };
+        TRY(texture_manager->load_tilemap(std::move(description)));
+
+        return Result<void>::success();
+    };
+
+    const auto load_texture = [=](TextureResource& resource) -> Result<void> {
         auto description = Resources::TextureManager::TextureDescription {
-            std::move(texture_resource.path),
-            std::move(texture_resource.name),
-            texture_resource.size,
+            std::move(resource.path),
+            std::move(resource.name),
+            resource.size,
         };
         TRY(texture_manager->load_texture(std::move(description)));
+
+        return Result<void>::success();
+    };
+
+    auto resources = TRY(loader->find_textures());
+    for (auto& resource : resources) {
+        if (resource.tiled)
+            TRY(load_tilemap(resource));
+        else
+            TRY(load_texture(resource));
     }
 
     auto fonts = TRY(loader->find_fonts());
-    font_manager->load_font(Resources::FontType::Monospace, fonts[Resources::FontType::Monospace]);
-    font_manager->load_font(Resources::FontType::Regular, fonts[Resources::FontType::Regular]);
+    font_manager->load_font(Resources::FontType::Monospace, fonts[Resources::FontType::Regular]);
+    font_manager->load_font(Resources::FontType::Regular, fonts[Resources::FontType::Monospace]);
 
     return Result<void>::success();
 }
