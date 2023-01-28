@@ -2,28 +2,20 @@
 #include <fmt/std.h>
 #include <raylib.h>
 #include <resources/fonts.h>
-#include <unordered_map>
 #include <util/assert.h>
 #include <util/raylib/raylib_extensions.h>
 #include <utility>
 
 namespace calamus::Resources {
 
-static std::unordered_map<FontType, Font> fonts {};
-
-FontManagement& FontManagement::get() {
-    static FontManagement instance;
-    return instance;
-}
-
-const Font& FontManagement::get_font(FontType type) {
+const Font& FontManager::get_font(FontType type) {
     const auto index = std::to_underlying(type);
     ASSERT(index < std::to_underlying(FontType::_Count));
-    return fonts.at(type);
+    return m_fonts->at(type);
 }
 
-Result<void> FontManagement::load_font(FontType type, const std::filesystem::path& path) {
-    if (fonts.contains(type))
+Result<void> FontManager::load_font(FontType type, const std::filesystem::path& path) {
+    if (m_fonts->contains(type))
         return Error::formatted("Another font is already registered for type {}", std::to_underlying(type));
 
     if (!exists(path))
@@ -33,15 +25,17 @@ Result<void> FontManagement::load_font(FontType type, const std::filesystem::pat
     if (const auto extension = path.extension(); extension != ".ttf")
         return Error::formatted("Invalid file extension: {}", extension);
 
-    fonts[type] = wrapper::rtext::load_font(path);
+    (*m_fonts)[type] = wrapper::rtext::load_font(path);
 
     return Result<void>::success();
 }
 
-FontManagement::FontManagement() = default;
+FontManager::FontManager()
+    : m_fonts(std::make_unique<std::unordered_map<FontType, Font>>()) {
+}
 
-FontManagement::~FontManagement() {
-    for (const auto& [_, font] : fonts) {
+FontManager::~FontManager() {
+    for (const auto& [_, font] : *m_fonts) {
         wrapper::rtext::unload_font(font);
     }
 }

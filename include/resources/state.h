@@ -15,6 +15,7 @@ namespace UI {
 
 namespace Resources {
     class TextureManager;
+    class FontManager;
 }
 
 enum class Screen {
@@ -33,8 +34,7 @@ struct State {
     Window* window { nullptr };
     UI::ScreenManager* screen_manager { nullptr };
     Resources::TextureManager* texture_manager { nullptr };
-
-    Font* primary_font { nullptr };
+    Resources::FontManager* font_manager { nullptr };
 
     Screen current_screen = Screen::Menu;
 };

@@ -1,7 +1,8 @@
 #pragma once
 
-#include <util/result.h>
 #include <filesystem>
+#include <unordered_map>
+#include <util/result.h>
 
 struct Font;
 
@@ -13,22 +14,21 @@ enum class FontType {
     _Count,
 };
 
-class FontManagement final {
+class FontManager final {
 public:
-    static FontManagement& get();
+    FontManager();
+    ~FontManager();
 
-    FontManagement(const FontManagement&) = delete;
-    FontManagement(FontManagement&&) noexcept = delete;
-
-    FontManagement& operator=(const FontManagement&) = delete;
-    FontManagement& operator=(FontManagement&&) noexcept = delete;
+    FontManager(const FontManager&) = delete;
+    FontManager(FontManager&&) noexcept = delete;
+    FontManager& operator=(const FontManager&) = delete;
+    FontManager& operator=(FontManager&&) noexcept = delete;
 
     const Font& get_font(FontType);
     Result<void> load_font(FontType, const std::filesystem::path&);
 
 private:
-    FontManagement();
-    ~FontManagement();
+    std::unique_ptr<std::unordered_map<FontType, Font>> m_fonts {};
 };
 
 }

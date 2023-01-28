@@ -139,7 +139,7 @@ void register_screens() {
 
 Result<void> load_resources() {
     auto* texture_manager = VERIFY_PTR(state.texture_manager);
-    auto& font_management = Resources::FontManagement::get();
+    auto* font_manager = VERIFY_PTR(state.font_manager);
 
     const auto loader = std::make_unique<ResourceLoader>(state.config->resources_root);
 
@@ -155,8 +155,8 @@ Result<void> load_resources() {
     }
 
     auto fonts = TRY(loader->find_fonts());
-    font_management.load_font(Resources::FontType::Monospace, fonts[Resources::FontType::Monospace]);
-    font_management.load_font(Resources::FontType::Regular, fonts[Resources::FontType::Regular]);
+    font_manager->load_font(Resources::FontType::Monospace, fonts[Resources::FontType::Monospace]);
+    font_manager->load_font(Resources::FontType::Regular, fonts[Resources::FontType::Regular]);
 
     return Result<void>::success();
 }
@@ -190,6 +190,8 @@ print greeter.get_greeting();
     state.config = config.get();
     auto textures = std::make_unique<Resources::TextureManager>();
     state.texture_manager = textures.get();
+    auto fonts = std::make_unique<Resources::FontManager>();
+    state.font_manager = fonts.get();
     auto screens = std::make_unique<UI::ScreenManager>();
     state.screen_manager = screens.get();
     auto window = std::make_unique<Window>();
