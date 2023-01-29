@@ -25,6 +25,7 @@ set(MAIN_SOURCES
         src/main.cpp
         src/resources/fonts.cpp
         src/resources/textures.cpp
+        src/ui/layout/fixed_layout.cpp
         src/ui/ui_button.cpp
         src/ui/ui_label.cpp
         src/ui/ui_screen.cpp

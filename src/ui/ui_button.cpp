@@ -20,7 +20,7 @@ IntPosition Button::compute_label_position() {
     const auto margins = Size { 0, 0 };
     const auto usable_size = m_size - (margins * 2);
     const auto label_size = m_label->size();
-    auto label_offset = m_label->position();
+    auto label_offset = IntPosition { 0, 0 };
     label_offset += calculate_offset_for_alignment(m_label_alignment, usable_size, label_size);
     label_offset += margins.to_position();
 
@@ -36,6 +36,20 @@ void Button::draw() {
 void Button::on_click(MouseButton mouse_button, IntPosition position) {
     if (mouse_button == MouseButton::Left)
         m_on_click(position);
+}
+
+void Button::set_position(IntPosition position) {
+    Object::set_position(position);
+
+    const auto label_position = compute_label_position();
+    m_label->set_position(label_position + m_position);
+}
+
+void Button::set_size(IntSize size) {
+    Object::set_size(size);
+
+    const auto label_position = compute_label_position();
+    m_label->set_position(label_position + m_position);
 }
 
 }

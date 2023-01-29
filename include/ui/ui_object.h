@@ -33,6 +33,10 @@ public:
     virtual void set_size(IntSize size) { m_size = size; }
 
     [[nodiscard]] virtual IntRect rect() { return IntRect { position(), size() }; }
+    virtual void set_rect(const IntRect& rect) {
+        set_size(rect.to_size());
+        set_position(rect.to_position());
+    }
 
     [[nodiscard]] virtual bool is_hoverable() const { return false; }
     virtual void on_hover_begin(IntPosition) {};

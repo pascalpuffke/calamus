@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <resources/state.h>
+#include <ui/layout/layout.h>
 #include <ui/ui_object.h>
 #include <unordered_map>
 #include <utility>
@@ -12,22 +13,26 @@ namespace calamus::UI {
 struct ScreenLayout {
     using object_ptr = std::shared_ptr<Object>;
 
-    [[nodiscard]] static ScreenLayout create(std::initializer_list<object_ptr> objects) {
-        auto vector = std::vector<object_ptr> {};
-        std::for_each(objects.begin(), objects.end(), [&](auto&& object) {
-            vector.emplace_back(object);
-        });
-        return ScreenLayout { std::move(vector) };
+    template <typename LayoutClass>
+        requires std::is_base_of_v<Layout, LayoutClass>
+    [[nodiscard]] static ScreenLayout create(std::vector<object_ptr>&& children) {
+        const auto layout = std::make_unique<LayoutClass>();
+        layout->apply(children);
+
+        for (auto& object : children)
+            object->set_rect(layout->get(object));
+
+        return ScreenLayout { std::move(children) };
     }
 
-    std::vector<object_ptr> objects;
+    explicit ScreenLayout(std::vector<object_ptr> children)
+        : m_children(std::move(children)) { }
+    explicit ScreenLayout() = default;
 
-    explicit ScreenLayout() { }
+    [[nodiscard]] const auto& children() const noexcept { return m_children; }
 
 private:
-    explicit ScreenLayout(std::vector<object_ptr> new_objects)
-        : objects(std::move(new_objects)) {
-    }
+    std::vector<object_ptr> m_children {};
 };
 
 class ScreenManager final {

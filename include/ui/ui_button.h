@@ -20,6 +20,9 @@ public:
     [[nodiscard]] ObjectType type() const override { return ObjectType::Button; }
     [[nodiscard]] const std::shared_ptr<Label>& label() const { return m_label; }
 
+    void set_position(IntPosition) override;
+    void set_size(IntSize) override;
+
     void on_hover_begin(IntPosition) override { m_hovered = true; }
     void on_hover_end() override { m_hovered = false; }
     void on_click(MouseButton mouse_button, IntPosition position) override;

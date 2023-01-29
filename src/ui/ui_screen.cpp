@@ -15,7 +15,7 @@ template <Arithmetic T = i32>
 }
 
 void ScreenManager::check_hover(IntPosition position) {
-    for (const auto& object : m_layouts[state.current_screen].objects) {
+    for (const auto& object : m_layouts[state.current_screen].children()) {
         if (!object->is_hoverable())
             continue;
 
@@ -32,7 +32,7 @@ void ScreenManager::check_hover(IntPosition position) {
 }
 
 void ScreenManager::check_click(MouseButton mouse_button, IntPosition position) {
-    for (const auto& object : m_layouts[state.current_screen].objects) {
+    for (const auto& object : m_layouts[state.current_screen].children()) {
         if (!object->is_clickable())
             continue;
 
