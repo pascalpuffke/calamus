@@ -5,15 +5,15 @@ if (MSVC)
     message(FATAL_ERROR "Windows platform is currently unsupported")
 endif ()
 
-include(cmake/options.cmake)
-include(cmake/packages.cmake)
-
 # Is this enough??????
 set(WARN_FLAGS -Wall -Wextra -Wshadow -Wold-style-cast -Woverloaded-virtual -Wconversion -Wsign-conversion -Wimplicit-fallthrough)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include(cmake/options.cmake)
+include(cmake/packages.cmake)
 
 set(MAIN_SOURCES
         src/file/resources.cpp
