@@ -10,15 +10,15 @@ void GridLayout::apply(const std::vector<object_ptr>& objects) {
         TODO("Implement non-homogeneous grid layout");
     }
 
-    const auto width = m_parent_rect.width / row_count();
-    const auto height = m_parent_rect.height / column_count();
+    const auto width = m_parent_rect.width / column_count();
+    const auto height = m_parent_rect.height / row_count();
 
     auto count = 0;
     for (auto& object : objects) {
-        auto x = count % row_count() * width + row_spacing_per_direction();
-        auto y = count / row_count() * height + column_spacing_per_direction();
+        auto x = count / row_count() * width + column_spacing_per_direction();
+        auto y = count % row_count() * height + row_spacing_per_direction();
 
-        auto rect = IntRect { x, y, width - row_spacing(), height - column_spacing() };
+        auto rect = IntRect { x, y, width - column_spacing(), height - row_spacing() };
         object->set_rect(rect);
 
         m_layout[object] = rect;
