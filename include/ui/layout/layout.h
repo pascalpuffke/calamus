@@ -20,6 +20,10 @@ public:
     virtual void apply(const std::vector<object_ptr>&) = 0;
     [[nodiscard]] virtual const IntRect& get(object_ptr) = 0;
 
+    virtual void set_parent_rect(const IntRect& parent_rect) {
+        m_parent_rect = parent_rect;
+    }
+
 protected:
     std::unordered_map<object_ptr, IntRect> m_layout {};
     IntRect m_parent_rect {};
