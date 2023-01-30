@@ -29,6 +29,8 @@
 
 #define UNREACHABLE() ASSERT_MSG(false, "Unreachable code reached")
 
+#define TODO(msg) ASSERT_MSG(false, "TODO: " msg)
+
 #define VERIFY_PTR(ptr) ({                        \
     ASSERT_MSG(ptr, "Expected non-null pointer"); \
     ptr;                                          \
