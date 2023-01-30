@@ -5,13 +5,14 @@
 #include <string>
 #include <ui/structs.h>
 #include <unordered_map>
+#include <vector>
 
 namespace calamus::Resources {
 
 class TextureManager final {
 public:
     TextureManager();
-    ~TextureManager() = default;
+    ~TextureManager();
 
     TextureManager(const TextureManager&) = delete;
     TextureManager& operator=(const TextureManager&) = delete;
@@ -35,10 +36,10 @@ public:
     };
     [[nodiscard]] Result<void> load_tilemap(TilemapDescription&&);
 
-    [[nodiscard]] const Texture& texture(std::string_view);
+    [[nodiscard]] const Texture& texture(const std::string&);
 
 private:
-    std::unique_ptr<std::unordered_map<std::string, Texture>> m_textures {};
+    std::unordered_map<std::string, std::unique_ptr<Texture>> m_textures {};
 };
 
 }

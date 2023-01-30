@@ -215,22 +215,6 @@ namespace rtext {
 }
 
 namespace rtextures {
-    texture_id upload_texture(std::span<u8> image_data, IntSize size, i32 mipmaps, i32 format) {
-        auto image = Image {
-            .data = image_data.data(),
-            .width = size.width,
-            .height = size.height,
-            .mipmaps = mipmaps,
-            .format = format,
-        };
-
-        // The OpenGL ID is the only parameter we care about.
-        auto texture = LoadTextureFromImage(image);
-        // Raylib initializes the texture struct with id=0 and should not return this value unless uploading the texture failed.
-        ASSERT(texture.id != 0);
-        return texture.id;
-    }
-
     void unload_texture(const calamus::Texture& texture) {
         // UnloadTexture only needs the ID, so passing an otherwise empty struct works fine.
         UnloadTexture(Texture2D {

@@ -64,9 +64,6 @@ namespace rtext {
 }
 
 namespace rtextures {
-    using texture_id = u32;
-
-    texture_id upload_texture(std::span<u8> image_data, IntSize size, i32 mipmaps, i32 format);
     void unload_texture(const calamus::Texture& texture);
 }
 
