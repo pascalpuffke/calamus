@@ -30,6 +30,7 @@ public:
 
 private:
     [[nodiscard]] IntPosition compute_label_position();
+    void reset_label();
 
     std::function<void(IntPosition)> m_on_click {};
     Color m_outline_color { default_palette::gray };

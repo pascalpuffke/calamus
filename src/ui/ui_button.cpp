@@ -3,15 +3,18 @@
 
 namespace calamus::UI {
 
+void Button::reset_label() {
+    const auto relative_label_position = compute_label_position();
+    m_label->set_position(relative_label_position + position());
+}
+
 Button::Button(std::shared_ptr<Label>& label, IntPosition position, IntSize size, std::function<void(IntPosition)> on_click, Alignment label_alignment)
     : m_on_click(std::move(on_click))
     , m_label(label)
     , m_label_alignment(label_alignment) {
     m_position = position;
     m_size = size;
-
-    const auto label_position = compute_label_position();
-    m_label->set_position(label_position + position);
+    reset_label();
 }
 
 IntPosition Button::compute_label_position() {
@@ -20,8 +23,7 @@ IntPosition Button::compute_label_position() {
     const auto margins = Size { 0, 0 };
     const auto usable_size = m_size - (margins * 2);
     const auto label_size = m_label->size();
-    auto label_offset = IntPosition { 0, 0 };
-    label_offset += calculate_offset_for_alignment(m_label_alignment, usable_size, label_size);
+    auto label_offset = calculate_offset_for_alignment(m_label_alignment, usable_size, label_size);
     label_offset += margins.to_position();
 
     return label_offset;
@@ -40,16 +42,12 @@ void Button::on_click(MouseButton mouse_button, IntPosition position) {
 
 void Button::set_position(IntPosition position) {
     Object::set_position(position);
-
-    const auto label_position = compute_label_position();
-    m_label->set_position(label_position + m_position);
+    reset_label();
 }
 
 void Button::set_size(IntSize size) {
     Object::set_size(size);
-
-    const auto label_position = compute_label_position();
-    m_label->set_position(label_position + m_position);
+    reset_label();
 }
 
 }
