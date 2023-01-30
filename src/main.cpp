@@ -4,6 +4,7 @@
 #include <resources/fonts.h>
 #include <resources/textures.h>
 #include <ui/layout/fixed_layout.h>
+#include <ui/layout/grid_layout.h>
 #include <ui/ui_button.h>
 #include <ui/ui_screen.h>
 #include <util/common.h>
@@ -55,42 +56,26 @@ void register_screens() {
     auto* manager = VERIFY_PTR(state.screen_manager);
 
     manager->register_screen(Screen::Game, UI::ScreenLayout::create<UI::FixedLayout>({}));
+    auto editor_layout = UI::GridLayout {};
+    editor_layout.set_columns_homogeneous(true);
+    editor_layout.set_rows_homogeneous(true);
+    editor_layout.set_column_count(3);
+    editor_layout.set_row_count(2);
+    editor_layout.set_column_spacing(10);
+    editor_layout.set_row_spacing(10);
+
+    // clang-format off
     manager->register_screen(Screen::Editor,
-        UI::ScreenLayout::create<UI::FixedLayout>({
-            UI::Button::create(
-                UI::Label::create("Center!", font_size),
-                Position { margin, margin },
-                Size {
-                    window->size().width - 2 * margin,
-                    font_size * 2,
-                },
-                [&](auto pos) {
-                    LOG_DEBUG("Clicked button 1 at {}", pos)
-                },
-                UI::Alignment::Center),
-            UI::Button::create(
-                UI::Label::create("Center left!", font_size),
-                Position { margin, (static_cast<i32>(margin * 1.5f) + font_size * 2) },
-                Size {
-                    window->size().width - 2 * margin,
-                    font_size * 2,
-                },
-                [&](auto pos) {
-                    LOG_DEBUG("Clicked button 2 at {}", pos)
-                },
-                UI::Alignment::CenterLeft),
-            UI::Button::create(
-                UI::Label::create("Center right!", font_size),
-                Position { margin, (static_cast<i32>(margin * 2) + font_size * 4) },
-                Size {
-                    window->size().width - 2 * margin,
-                    font_size * 2,
-                },
-                [&](auto pos) {
-                    LOG_DEBUG("Clicked button 3 at {}", pos)
-                },
-                UI::Alignment::CenterRight),
+        UI::ScreenLayout::create(editor_layout, {
+            UI::Button::create(UI::Label::create("1", font_size), {}, {}, [&](auto) { LOG_DEBUG("1") }),
+            UI::Button::create(UI::Label::create("2", font_size), {}, {}, [&](auto) { LOG_DEBUG("2") }),
+            UI::Button::create(UI::Label::create("3", font_size), {}, {}, [&](auto) { LOG_DEBUG("3") }),
+            UI::Button::create(UI::Label::create("4", font_size), {}, {}, [&](auto) { LOG_DEBUG("4") }),
+            UI::Button::create(UI::Label::create("5", font_size), {}, {}, [&](auto) { LOG_DEBUG("5") }),
+            UI::Button::create(UI::Label::create("6", font_size), {}, {}, [&](auto) { LOG_DEBUG("6") }),
         }));
+    // clang-format on
+
     manager->register_screen(Screen::Menu,
         UI::ScreenLayout::create<UI::FixedLayout>({
             UI::Button::create(
@@ -141,8 +126,6 @@ Result<void> load_resources() {
     auto* texture_manager = VERIFY_PTR(state.texture_manager);
     auto* font_manager = VERIFY_PTR(state.font_manager);
 
-    const auto loader = std::make_unique<ResourceLoader>(state.config->resources_root);
-
     const auto load_tilemap = [=](TextureResource& resource) -> Result<void> {
         if (!resource.tile_names.has_value())
             return Error { "Can't load tilemap with empty tile_names vector" };
@@ -170,6 +153,7 @@ Result<void> load_resources() {
         return Result<void>::success();
     };
 
+    const auto loader = std::make_unique<ResourceLoader>(state.config->resources_root);
     auto resources = TRY(loader->find_textures());
     for (auto& resource : resources) {
         if (resource.tiled)
@@ -179,8 +163,8 @@ Result<void> load_resources() {
     }
 
     auto fonts = TRY(loader->find_fonts());
-    font_manager->load_font(Resources::FontType::Monospace, fonts[Resources::FontType::Regular]);
-    font_manager->load_font(Resources::FontType::Regular, fonts[Resources::FontType::Monospace]);
+    font_manager->load_font(Resources::FontType::Monospace, fonts[Resources::FontType::Monospace]);
+    font_manager->load_font(Resources::FontType::Regular, fonts[Resources::FontType::Regular]);
 
     return Result<void>::success();
 }

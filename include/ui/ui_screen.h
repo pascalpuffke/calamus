@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <graphics/window.h>
 #include <resources/state.h>
 #include <ui/layout/layout.h>
 #include <ui/ui_object.h>
@@ -17,10 +18,21 @@ struct ScreenLayout {
         requires std::is_base_of_v<Layout, LayoutClass>
     [[nodiscard]] static ScreenLayout create(std::vector<object_ptr>&& children) {
         const auto layout = std::make_unique<LayoutClass>();
+        layout->set_parent_rect(IntRect { IntPosition { 0, 0 }, state.window->size() });
         layout->apply(children);
 
         for (auto& object : children)
             object->set_rect(layout->get(object));
+
+        return ScreenLayout { std::move(children) };
+    }
+
+    [[nodiscard]] static ScreenLayout create(Layout& layout, std::vector<object_ptr>&& children) {
+        layout.set_parent_rect(IntRect { IntPosition { 0, 0 }, state.window->size() });
+        layout.apply(children);
+
+        for (auto& object : children)
+            object->set_rect(layout.get(object));
 
         return ScreenLayout { std::move(children) };
     }
