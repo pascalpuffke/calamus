@@ -44,9 +44,6 @@ void ScreenManager::check_click(MouseButton mouse_button, IntPosition position) 
 }
 
 void ScreenManager::register_screen(Screen screen, ScreenLayout&& layout) {
-    // I hope this *actually* moves the layout and there is no copy happening somewhere.
-    // ... even though it literally wouldn't matter in the slightest, as UI screens are
-    // only ever registered once, so this is far from performance-critical code. Whatever.
     m_layouts[screen] = std::move(layout);
 }
 
