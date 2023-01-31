@@ -17,7 +17,6 @@ public:
     USED explicit RenderingScope(const Camera& camera, std::function<void()> render, std::function<void()> ui)
         : render_function(std::move(render))
         , ui_function(std::move(ui)) {
-        // LOG_DEBUG("camera {} offset={} target={} rotation={} zoom={}", fmt::ptr(camera), camera->offset, camera->target, camera->rotation, camera->zoom);
         rcore::begin_drawing();
         rcore::clear_background(default_palette::black);
         rcore::begin_mode_2d(camera);
@@ -98,14 +97,14 @@ void Renderer::draw_ui() {
     for (const auto& object : layout.children()) {
         object->draw();
         if (state.config->draw_ui_bounds)
-            draw_ui_bounds(object.get());
+            draw_ui_bounds(object);
     }
 
     if (state.config->show_fps)
         draw_fps(Position { 10, 10 }, 20, default_palette::green);
 }
 
-void Renderer::draw_ui_bounds(UI::Object* object) {
+void Renderer::draw_ui_bounds(const std::shared_ptr<UI::Object>& object) {
     const auto& position = object->position();
     const auto& size = object->size();
     const auto bounds = IntRect {
@@ -115,9 +114,9 @@ void Renderer::draw_ui_bounds(UI::Object* object) {
     rshapes::draw_rectangle_outline(bounds, 1.0f, default_palette::red);
 
     if (object->type() == UI::ObjectType::Button) {
-        const auto* button = dynamic_cast<UI::Button*>(object); // Yes, I use dynamic_cast. Sue me, go ahead
+        const auto* button = object->as<UI::Button>();
         const auto& inner_label = button->label();
-        draw_ui_bounds(inner_label.get());
+        draw_ui_bounds(inner_label);
     }
 }
 

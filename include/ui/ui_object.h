@@ -15,6 +15,9 @@ public:                     \
 
 namespace calamus::UI {
 
+class Button;
+class Label;
+
 enum class ObjectType {
     Label,
     Button,
@@ -50,6 +53,28 @@ public:
     // Every child needs to override these.
     [[nodiscard]] virtual ObjectType type() const = 0;
     virtual void draw() = 0;
+
+    // A glorified/safer 'dynamic_cast'.
+    template <typename T>
+        requires std::is_base_of_v<Object, T>
+    T* as() {
+        // static assertions won't work due to Object not being constexpr, so we can't check the type in 'if constexpr'
+        // It would be totally possible to convert a lot of the UI stuff to be constexpr, but I don't care enough.
+        // Overhead should be minimal, and the assertions will be gone in release builds.
+        switch (type()) {
+        case ObjectType::Button: {
+            ASSERT_MSG((std::is_same_v<T, UI::Button>), "Cannot cast to object of different type");
+        } break;
+        case ObjectType::Label: {
+            ASSERT_MSG((std::is_same_v<T, UI::Label>), "Cannot cast to object of different type");
+        } break;
+        default: {
+            UNREACHABLE();
+        }
+        }
+
+        return dynamic_cast<T*>(this);
+    }
 
 protected:
     IntPosition m_position {};

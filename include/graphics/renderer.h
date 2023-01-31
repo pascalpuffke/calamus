@@ -26,7 +26,7 @@ private:
     void render();
 
     void draw_ui();
-    void draw_ui_bounds(UI::Object*);
+    void draw_ui_bounds(const std::shared_ptr<UI::Object>&);
     void draw_fps(IntPosition, i32, Color);
 
     Window* m_window { nullptr };
