@@ -1,25 +1,28 @@
 #include <algorithm>
 #include <graphics/window.h>
-#include <raylib.h>
 #include <resources/state.h>
 #include <util/assert.h>
 #include <util/raylib/raylib_wrapper.h>
 
 namespace calamus {
 
+using namespace wrapper;
+
 void Window::init() {
     const auto* config = VERIFY_PTR(state.config);
-    InitWindow(config->width, config->height, m_title.data());
-    SetWindowState(FLAG_WINDOW_RESIZABLE);
+    rcore::init_window(IntSize { config->width, config->height }, m_title);
+    rcore::set_window_state(0x04);
 
-    const auto monitor = GetCurrentMonitor();
+    const auto monitor = rcore::get_current_monitor();
+    const auto refresh = rcore::get_monitor_refresh_rate(monitor);
+    LOG_INFO("Using monitor '{}', {} Hz, {}", rcore::get_monitor_name(monitor), refresh, rcore::get_monitor_size(monitor));
+
     if (config->vsync) {
-        const auto refresh_rate = GetMonitorRefreshRate(monitor);
-        SetTargetFPS(refresh_rate);
+        rcore::set_target_fps(refresh);
     } else if (config->limit_fps) {
-        SetTargetFPS(config->target_fps);
+        rcore::set_target_fps(config->target_fps);
     } else {
-        SetTargetFPS(0);
+        rcore::set_target_fps(0);
     }
 
     m_properties.cursor_enabled = true;
@@ -29,18 +32,18 @@ void Window::init() {
 }
 
 void Window::refresh() {
-    m_properties.should_close = WindowShouldClose();
-    m_properties.ready = IsWindowReady();
-    m_properties.fullscreen = IsWindowFullscreen();
-    m_properties.hidden = IsWindowHidden();
-    m_properties.maximized = IsWindowMaximized();
-    m_properties.minimized = IsWindowMinimized();
-    m_properties.focused = IsWindowFocused();
-    m_properties.cursor_visible = !IsCursorHidden();
+    m_properties.should_close = rcore::window_should_close();
+    m_properties.ready = rcore::is_window_ready();
+    m_properties.fullscreen = rcore::is_window_fullscreen();
+    m_properties.hidden = rcore::is_window_hidden();
+    m_properties.maximized = rcore::is_window_maximized();
+    m_properties.minimized = rcore::is_window_minimized();
+    m_properties.focused = rcore::is_window_focused();
+    m_properties.cursor_visible = !rcore::is_cursor_hidden();
     // cursor_enabled, opacity and min_size are not tracked by raylib
 
     const auto current_size = m_properties.size;
-    const auto new_size = IntSize { GetScreenWidth(), GetScreenHeight() };
+    const auto new_size = rcore::get_screen_size();
     if (new_size != current_size) {
         for (const auto& callback : m_resize_callbacks) {
             (*callback)(new_size);
@@ -49,7 +52,7 @@ void Window::refresh() {
     }
 
     const auto current_position = m_properties.position;
-    const auto new_position = wrapper::rcore::get_window_position();
+    const auto new_position = rcore::get_window_position();
     if (new_position != current_position) {
         for (const auto& callback : m_move_callbacks) {
             (*callback)(new_position);
@@ -58,65 +61,65 @@ void Window::refresh() {
     }
 }
 
-void Window::close() { CloseWindow(); }
+void Window::close() { rcore::close_window(); }
 
 void Window::set_title(std::string_view title) {
     m_title = title;
-    SetWindowTitle(m_title.data());
+    rcore::set_window_title(title);
 }
 
 void Window::set_fullscreen(bool fullscreen) {
     if (fullscreen != m_properties.fullscreen)
-        ToggleFullscreen();
+        rcore::toggle_fullscreen();
     m_properties.fullscreen = fullscreen;
 }
 
 void Window::maximize() {
     m_properties.maximized = true;
     m_properties.minimized = false;
-    MaximizeWindow();
+    rcore::maximize_window();
 }
 
 void Window::minimize() {
     m_properties.minimized = true;
     m_properties.maximized = false;
-    MinimizeWindow();
+    rcore::minimize_window();
 }
 
 void Window::set_cursor_visible(bool visible) {
     m_properties.cursor_visible = visible;
     if (visible)
-        ShowCursor();
+        rcore::show_cursor();
     else
-        HideCursor();
+        rcore::hide_cursor();
 }
 
 void Window::set_cursor_enabled(bool enabled) {
     m_properties.cursor_enabled = enabled;
     if (enabled)
-        EnableCursor();
+        rcore::enable_cursor();
     else
-        DisableCursor();
+        rcore::disable_cursor();
 }
 
 void Window::set_minimum_size(IntSize size) {
     m_properties.min_size = size;
-    SetWindowMinSize(size.width, size.height);
+    rcore::set_window_min_size(size);
 }
 
 void Window::set_size(IntSize size) {
     m_properties.size = size;
-    SetWindowSize(size.width, size.height);
+    rcore::set_window_size(size);
 }
 
 void Window::set_position(IntPosition position) {
     m_properties.position = position;
-    SetWindowPosition(position.x, position.y);
+    rcore::set_window_position(position);
 }
 
 void Window::set_monitor(i32 monitor_index) {
     m_properties.monitor = monitor_index;
-    SetWindowMonitor(monitor_index);
+    rcore::set_window_monitor(monitor_index);
 }
 
 void Window::set_opacity(f32 opacity) {
