@@ -1,5 +1,6 @@
 #pragma once
 
+#include <graphics/texture.h>
 #include <graphics/camera.h>
 #include <graphics/window.h>
 
@@ -25,6 +26,7 @@ public:
 private:
     void render();
 
+    void draw_texture(const calamus::Texture&, IntPosition);
     void draw_ui();
     void draw_ui_bounds(const std::shared_ptr<UI::Object>&);
     void draw_fps(IntPosition, i32, Color);

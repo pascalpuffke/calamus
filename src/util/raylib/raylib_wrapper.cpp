@@ -206,6 +206,28 @@ namespace rtextures {
             .id = texture.id(),
         });
     }
+
+    void draw_texture(const calamus::Texture& texture, IntPosition position) {
+        const auto original_width = texture.parent_width() == 0 ? texture.width() : texture.parent_width();
+        const auto original_height = texture.parent_width() == 0 ? texture.width() : texture.parent_width();
+
+        const auto rl_texture = Texture2D {
+            .id = texture.id(),
+            .width = original_width,
+            .height = original_height,
+            // These two don't matter
+            .mipmaps = 0,
+            .format = 0,
+        };
+        DrawTextureRec(
+            rl_texture,
+            { static_cast<float>(texture.offset().x),
+                static_cast<float>(texture.offset().y),
+                static_cast<float>(texture.width()),
+                static_cast<float>(texture.height()) },
+            rl_vec_from(position),
+            { 255, 255, 255, 255 });
+    }
 }
 
 }

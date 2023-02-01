@@ -14,17 +14,15 @@ using namespace wrapper;
 
 class RenderingScope {
 public:
-    USED explicit RenderingScope(const Camera& camera, std::function<void()> render, std::function<void()> ui)
+    USED explicit RenderingScope([[maybe_unused]] const Camera& camera, std::function<void()> render, std::function<void()> ui)
         : render_function(std::move(render))
         , ui_function(std::move(ui)) {
         rcore::begin_drawing();
         rcore::clear_background(default_palette::black);
-        rcore::begin_mode_2d(camera);
         render_function();
     }
 
     ~RenderingScope() {
-        rcore::end_mode_2d();
         ui_function();
         rcore::end_drawing();
     }
@@ -73,12 +71,16 @@ void Renderer::start() {
                     m_camera.set_offset(m_camera.offset() + IntPosition { 10 });
                     println(m_camera.offset());
                 }
+
                 const auto mouse_position = rcore::get_mouse_position();
                 state.screen_manager->check_hover(mouse_position);
-                if (rcore::is_mouse_button_pressed(MouseButton::Left))
-                    state.screen_manager->check_click(MouseButton::Left, mouse_position);
-                if (rcore::is_mouse_button_pressed(MouseButton::Right))
-                    state.screen_manager->check_click(MouseButton::Right, mouse_position);
+
+                for (auto button_index = 0; button_index < std::to_underlying(MouseButton::__Count); button_index++) {
+                    const auto button = static_cast<MouseButton>(button_index);
+                    if (rcore::is_mouse_button_pressed(button))
+                        state.screen_manager->check_click(button, mouse_position);
+                }
+
                 render();
             },
             [this]() {
@@ -90,6 +92,21 @@ void Renderer::start() {
 }
 
 void Renderer::render() {
+    const auto& grass = state.texture_manager->texture("grass");
+    const auto win_size = m_window->size();
+
+    for (auto x = 0; x < win_size.width; x += grass.width()) {
+        for (auto y = 0; y < win_size.height; y += grass.height()) {
+            draw_texture(grass, IntPosition { x, y });
+        }
+    }
+}
+
+void Renderer::draw_texture(const Texture& texture, IntPosition position) {
+    if (position > m_window->size().to_position())
+        return;
+
+    wrapper::rtextures::draw_texture(texture, position);
 }
 
 void Renderer::draw_ui() {
@@ -123,15 +140,15 @@ void Renderer::draw_ui_bounds(const std::shared_ptr<UI::Object>& object) {
 void Renderer::draw_fps(IntPosition position, i32 font_size, Color color) {
     const auto frametime = rcore::get_frame_time();
     const auto fps = rcore::get_fps();
-    const auto string = fmt::format("{} fps ({:.02f}ms/f) {}", fps, frametime, m_frame);
-    rtext::draw_text(string, position, font_size, color, Resources::FontType::Monospace);
+    const auto fps_string = fmt::format("{} fps ({:.02f}ms/f) {}", fps, frametime, m_frame);
+    rtext::draw_text(fps_string, position, font_size, color, Resources::FontType::Monospace);
 
     const auto pos = m_window->position();
-    const auto pos_string = fmt::format("{} {}", pos.x, pos.y);
+    const auto pos_string = fmt::format("{}", pos);
     rtext::draw_text(pos_string, IntPosition { position.x, position.y + font_size }, font_size, color, Resources::FontType::Monospace);
 
     const auto size = m_window->size();
-    const auto size_string = fmt::format("{}x{}", size.width, size.height);
+    const auto size_string = fmt::format("{}", size);
     rtext::draw_text(size_string, IntPosition { position.x, position.y + (font_size * 2) }, font_size, color, Resources::FontType::Monospace);
 }
 

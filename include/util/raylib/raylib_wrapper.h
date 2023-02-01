@@ -109,7 +109,8 @@ namespace rtext {
 }
 
 namespace rtextures {
-    void unload_texture(const calamus::Texture& texture);
+    void unload_texture(const calamus::Texture&);
+    void draw_texture(const calamus::Texture&, IntPosition);
 }
 
 }
