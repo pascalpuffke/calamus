@@ -290,7 +290,7 @@ struct fmt::formatter<calamus::BasicColor<T>> {
     DEFAULT_FORMAT_PARSE()
     template <typename FormatContext>
     auto format(const calamus::BasicColor<T>& value, FormatContext& context) {
-        return format_to(context.out(), "BasicColor<{}>({}, {}, {}, {})", calamus::type_name<T>(), value.r, value.g, value.b, value.a);
+        return format_to(context.out(), "({}, {}, {}, {})", value.r, value.g, value.b, value.a);
     }
 };
 
@@ -299,7 +299,7 @@ struct fmt::formatter<calamus::Rectangle<T>> {
     DEFAULT_FORMAT_PARSE()
     template <typename FormatContext>
     auto format(const calamus::Rectangle<T>& value, FormatContext& context) {
-        return format_to(context.out(), "Rectangle<{}>({}, {}, {}, {})", calamus::type_name<T>(), value.x, value.y, value.width, value.height);
+        return format_to(context.out(), "({}, {}, {}, {})", value.x, value.y, value.width, value.height);
     }
 };
 
@@ -308,7 +308,7 @@ struct fmt::formatter<calamus::Position<T>> {
     DEFAULT_FORMAT_PARSE()
     template <typename FormatContext>
     auto format(const calamus::Position<T>& value, FormatContext& context) {
-        return format_to(context.out(), "Position<{}>({}, {})", calamus::type_name<T>(), value.x, value.y);
+        return format_to(context.out(), "({}, {})", value.x, value.y);
     }
 };
 
@@ -317,7 +317,7 @@ struct fmt::formatter<calamus::Size<T>> {
     DEFAULT_FORMAT_PARSE()
     template <typename FormatContext>
     auto format(const calamus::Size<T>& value, FormatContext& context) {
-        return format_to(context.out(), "Size<{}>({}, {})", calamus::type_name<T>(), value.width, value.height);
+        return format_to(context.out(), "({}x{})", value.width, value.height);
     }
 };
 
