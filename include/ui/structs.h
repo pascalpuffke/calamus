@@ -15,6 +15,7 @@ concept Arithmetic = std::is_arithmetic_v<T> && !std::is_same_v<T, bool>;
 enum class MouseButton : i32 {
     Left = 0,
     Right = 1,
+    __Count = 2,
 };
 
 enum class MouseCursor : i32 {
@@ -190,6 +191,8 @@ struct Size {
 
     constexpr auto operator+(const Size& other) const { return Size { width + other.width, height + other.height }; }
     constexpr auto operator-(const Size& other) const { return Size { width - other.width, height - other.height }; }
+    constexpr auto operator*(const Size& other) const { return Size { width * other.width, height * other.height }; }
+    constexpr auto operator/(const Size& other) const { return Size { width / other.width, height / other.height }; }
     constexpr auto operator*(T other) const { return Size { width * other, height * other }; }
     constexpr auto operator/(T other) const { return Size { width / other, height / other }; }
     constexpr auto operator+=(const Size& other) {
