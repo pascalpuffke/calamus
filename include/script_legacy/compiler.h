@@ -1,8 +1,8 @@
 #pragma once
 
-#include <script/chunk.h>
-#include <script/object.h>
-#include <script/scanner.h>
+#include <script_legacy/chunk.h>
+#include <script_legacy/object.h>
+#include <script_legacy/scanner.h>
 #include <string_view>
 
 namespace calamus::script {

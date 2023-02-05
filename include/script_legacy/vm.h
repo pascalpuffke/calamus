@@ -1,8 +1,8 @@
 #pragma once
 
-#include <script/object.h>
-#include <script/table.h>
-#include <script/value.h>
+#include <script_legacy/object.h>
+#include <script_legacy/table.h>
+#include <script_legacy/value.h>
 #include <string_view>
 
 constexpr static auto FRAMES_MAX = 64;

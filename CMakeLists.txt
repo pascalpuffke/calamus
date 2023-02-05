@@ -18,7 +18,6 @@ include(cmake/packages.cmake)
 set(MAIN_SOURCES
         src/file/resources.cpp
         src/file/toml-config.cpp
-        src/graphics/image.cpp
         src/graphics/renderer.cpp
         src/graphics/texture.cpp
         src/graphics/window.cpp
@@ -33,15 +32,15 @@ set(MAIN_SOURCES
         src/util/raylib/raylib_wrapper.cpp)
 
 set(SCRIPT_SOURCES
-        src/script/chunk.cpp
-        src/script/compiler.cpp
-        src/script/debug.cpp
-        src/script/memory.cpp
-        src/script/object.cpp
-        src/script/scanner.cpp
-        src/script/table.cpp
-        src/script/value.cpp
-        src/script/vm.cpp)
+        src/script_legacy/chunk.cpp
+        src/script_legacy/compiler.cpp
+        src/script_legacy/debug.cpp
+        src/script_legacy/memory.cpp
+        src/script_legacy/object.cpp
+        src/script_legacy/scanner.cpp
+        src/script_legacy/table.cpp
+        src/script_legacy/value.cpp
+        src/script_legacy/vm.cpp)
 
 # SCRIPT_SOURCES is required by test/CMakeLists.txt, without turning these into absolute paths it won't find any files.
 list(TRANSFORM SCRIPT_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")

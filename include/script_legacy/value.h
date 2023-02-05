@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstring>
-#include <script/config.h>
+#include <script_legacy/config.h>
 #include <util/types.h>
 
 namespace calamus::script {

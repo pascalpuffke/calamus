@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <script/vm.h>
+#include <script_legacy/vm.h>
 
 using namespace calamus::script;
 

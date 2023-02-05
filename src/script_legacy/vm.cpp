@@ -2,11 +2,11 @@
 #include <cstdio>
 #include <cstring>
 #include <ctime>
-#include <script/compiler.h>
-#include <script/config.h>
-#include <script/debug.h>
-#include <script/memory.h>
-#include <script/vm.h>
+#include <script_legacy/compiler.h>
+#include <script_legacy/config.h>
+#include <script_legacy/debug.h>
+#include <script_legacy/memory.h>
+#include <script_legacy/vm.h>
 #include <util/common.h>
 #include <util/scoped_timer.h>
 
@@ -493,7 +493,7 @@ static InterpretResult run() {
             auto* subclass_methods = &AS_CLASS(superclass)->methods;
             for (const auto& [key, value] : subclass_methods->entries())
                 subclass->methods.set(key, value);
-            
+
             pop(); // Subclass.
             break;
         }

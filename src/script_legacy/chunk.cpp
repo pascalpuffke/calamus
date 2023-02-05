@@ -1,6 +1,6 @@
-#include <script/chunk.h>
-#include <script/memory.h>
-#include <script/vm.h>
+#include <script_legacy/chunk.h>
+#include <script_legacy/memory.h>
+#include <script_legacy/vm.h>
 
 namespace calamus::script {
 

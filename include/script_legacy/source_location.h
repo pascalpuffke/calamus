@@ -1,6 +1,6 @@
 #pragma once
 
-#include <script/config.h>
+#include <script_legacy/config.h>
 
 namespace calamus::script {
 

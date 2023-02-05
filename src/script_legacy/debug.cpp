@@ -1,7 +1,7 @@
 #include <fmt/color.h>
-#include <script/debug.h>
-#include <script/object.h>
-#include <script/value.h>
+#include <script_legacy/debug.h>
+#include <script_legacy/object.h>
+#include <script_legacy/value.h>
 
 namespace calamus::script {
 

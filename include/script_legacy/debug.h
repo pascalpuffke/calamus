@@ -1,6 +1,6 @@
 #pragma once
 
-#include <script/chunk.h>
+#include <script_legacy/chunk.h>
 
 namespace calamus::script {
 

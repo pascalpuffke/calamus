@@ -1,9 +1,9 @@
 #include <cstring>
 #include <fmt/color.h>
-#include <script/memory.h>
-#include <script/object.h>
-#include <script/value.h>
-#include <script/vm.h>
+#include <script_legacy/memory.h>
+#include <script_legacy/object.h>
+#include <script_legacy/value.h>
+#include <script_legacy/vm.h>
 
 namespace calamus::script {
 

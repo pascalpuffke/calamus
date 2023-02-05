@@ -1,8 +1,8 @@
 #pragma once
 
 #include <optional>
-#include <script/config.h>
-#include <script/value.h>
+#include <script_legacy/config.h>
+#include <script_legacy/value.h>
 #include <unordered_map>
 
 namespace calamus::script {

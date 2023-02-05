@@ -2,10 +2,10 @@
 #include <cstring>
 #include <fmt/format.h>
 #include <numeric>
-#include <script/compiler.h>
-#include <script/config.h>
-#include <script/debug.h>
-#include <script/memory.h>
+#include <script_legacy/compiler.h>
+#include <script_legacy/config.h>
+#include <script_legacy/debug.h>
+#include <script_legacy/memory.h>
 #include <unordered_map>
 #include <util/assert.h>
 

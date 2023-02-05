@@ -1,9 +1,9 @@
 #include <cstdlib>
 #include <fmt/color.h>
-#include <script/compiler.h>
-#include <script/debug.h>
-#include <script/memory.h>
-#include <script/vm.h>
+#include <script_legacy/compiler.h>
+#include <script_legacy/debug.h>
+#include <script_legacy/memory.h>
+#include <script_legacy/vm.h>
 
 namespace calamus::script {
 

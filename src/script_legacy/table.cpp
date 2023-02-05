@@ -1,6 +1,6 @@
 #include <cstring>
-#include <script/memory.h>
-#include <script/table.h>
+#include <script_legacy/memory.h>
+#include <script_legacy/table.h>
 
 namespace calamus::script {
 

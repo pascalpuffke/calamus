@@ -1,9 +1,9 @@
 #pragma once
 
-#include <script/chunk.h>
-#include <script/config.h>
-#include <script/table.h>
-#include <script/value.h>
+#include <script_legacy/chunk.h>
+#include <script_legacy/config.h>
+#include <script_legacy/table.h>
+#include <script_legacy/value.h>
 #include <string_view>
 #include <utility>
 

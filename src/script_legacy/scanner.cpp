@@ -1,6 +1,6 @@
 #include <cctype>
 #include <cstring>
-#include <script/scanner.h>
+#include <script_legacy/scanner.h>
 #include <util/assert.h>
 #include <util/types.h>
 
