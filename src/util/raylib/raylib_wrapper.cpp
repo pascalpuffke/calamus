@@ -209,7 +209,7 @@ namespace rtextures {
 
     void draw_texture(const calamus::Texture& texture, IntPosition position) {
         const auto original_width = texture.parent_width() == 0 ? texture.width() : texture.parent_width();
-        const auto original_height = texture.parent_width() == 0 ? texture.width() : texture.parent_width();
+        const auto original_height = texture.parent_height() == 0 ? texture.height() : texture.parent_height();
 
         const auto rl_texture = Texture2D {
             .id = texture.id(),
@@ -221,10 +221,10 @@ namespace rtextures {
         };
         DrawTextureRec(
             rl_texture,
-            { static_cast<float>(texture.offset().x),
-                static_cast<float>(texture.offset().y),
-                static_cast<float>(texture.width()),
-                static_cast<float>(texture.height()) },
+            { static_cast<f32>(texture.offset().x),
+                static_cast<f32>(texture.offset().y),
+                static_cast<f32>(texture.width()),
+                static_cast<f32>(texture.height()) },
             rl_vec_from(position),
             { 255, 255, 255, 255 });
     }
