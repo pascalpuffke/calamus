@@ -50,7 +50,7 @@ Result<void> TextureManager::load_tilemap(TextureManager::TilemapDescription&& t
     const auto number_of_tiles = tile_names.size();
     for (auto x = 0; x < tiles.width; x++) {
         for (auto y = 0; y < tiles.height; y++) {
-            const auto index = static_cast<size_t>(x * tiles.width + y);
+            const auto index = static_cast<size_t>(y * tiles.height + x);
             if (index >= number_of_tiles)
                 break;
 
