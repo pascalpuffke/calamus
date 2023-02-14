@@ -207,7 +207,7 @@ namespace rtextures {
         });
     }
 
-    void draw_texture(const calamus::Texture& texture, IntPosition position) {
+    void draw_texture(const calamus::Texture& texture, IntPosition position, IntSize size) {
         const auto original_width = texture.parent_width() == 0 ? texture.width() : texture.parent_width();
         const auto original_height = texture.parent_height() == 0 ? texture.height() : texture.parent_height();
 
@@ -219,14 +219,13 @@ namespace rtextures {
             .mipmaps = 0,
             .format = 0,
         };
-        DrawTextureRec(
-            rl_texture,
-            { static_cast<f32>(texture.offset().x),
-                static_cast<f32>(texture.offset().y),
-                static_cast<f32>(texture.width()),
-                static_cast<f32>(texture.height()) },
-            rl_vec_from(position),
-            { 255, 255, 255, 255 });
+        const auto source = IntRect { texture.offset().x, texture.offset().y, texture.width(), texture.height() };
+        const auto dest = IntRect { position.x, position.y, size.width, size.height };
+        const auto origin = IntPosition { 0 };
+        const auto rotation = 0.0f;
+        const auto tint = Color::from_hex(0xFFFFFF);
+
+        DrawTexturePro(rl_texture, rl_rect_from(source), rl_rect_from(dest), rl_vec_from(origin), rotation, rl_color_from(tint));
     }
 }
 

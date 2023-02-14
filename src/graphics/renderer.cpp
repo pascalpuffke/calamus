@@ -106,7 +106,7 @@ void Renderer::draw_texture(const Texture& texture, IntPosition position) {
     if (position > m_window->size().to_position())
         return;
 
-    wrapper::rtextures::draw_texture(texture, position);
+    wrapper::rtextures::draw_texture(texture, position, texture.size());
 }
 
 void Renderer::draw_ui() {
