@@ -32,17 +32,11 @@ struct BasicColor {
     /// Constructs a Color from a 32-bit hexadecimal number (0xAARRGGBB).
     /// If alpha channel is 0, this function will return a=255. Use from_parts if you need to construct with a=0.
     static constexpr BasicColor<u8> from_hex(u32 hex) {
-        if (hex > 0xFFFFFF) {
-            const auto alpha = static_cast<u8>((hex >> 24) & 0xFF);
-            const auto red = static_cast<u8>((hex >> 16) & 0xFF);
-            const auto green = static_cast<u8>((hex >> 8) & 0xFF);
-            const auto blue = static_cast<u8>(hex & 0xFF);
-            return { red, green, blue, alpha };
-        }
-        const auto red = static_cast<u8>((hex >> 16) & 0xFF);
-        const auto green = static_cast<u8>((hex >> 8) & 0xFF);
-        const auto blue = static_cast<u8>(hex & 0xFF);
-        return { red, green, blue, 0xFF };
+        const u8 alpha = (hex >> 24) & 0xFF;
+        const u8 red = (hex >> 16) & 0xFF;
+        const u8 green = (hex >> 8) & 0xFF;
+        const u8 blue = hex & 0xFF;
+        return { red, green, blue, static_cast<u8>(alpha ? alpha : 0xFF) };
     }
 
     static constexpr BasicColor<T> from_parts(T r, T g, T b, T a = std::numeric_limits<T>::max()) {
