@@ -25,7 +25,9 @@ Result<void> FontManager::load_font(FontType type, const std::filesystem::path& 
     if (const auto extension = path.extension(); extension != ".ttf")
         return Error::formatted("Invalid file extension: {}", extension);
 
-    (*m_fonts)[type] = wrapper::rtext::load_font(path);
+    auto [_, success] = m_fonts->insert({ type, wrapper::rtext::load_font(path) });
+    if (!success)
+        return Error::formatted("Couldn't insert font {}", path);
 
     return Result<void>::success();
 }
