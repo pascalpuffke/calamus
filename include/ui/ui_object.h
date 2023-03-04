@@ -57,7 +57,7 @@ public:
     // A glorified/safer 'dynamic_cast'.
     template <typename T>
         requires std::is_base_of_v<Object, T>
-    T* as() {
+    T* as_ptr() {
         // static assertions won't work due to Object not being constexpr, so we can't check the type in 'if constexpr'
         // It would be totally possible to convert a lot of the UI stuff to be constexpr, but I don't care enough.
         // Overhead should be minimal, and the assertions will be gone in release builds.
@@ -73,7 +73,13 @@ public:
         }
         }
 
-        return dynamic_cast<T*>(this);
+        return static_cast<T*>(this);
+    }
+
+    template <typename T>
+        requires std::is_base_of_v<Object, T>
+    T& as_ref() {
+        return *as_ptr<T>();
     }
 
 protected:

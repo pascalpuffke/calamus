@@ -124,8 +124,8 @@ void Renderer::draw_ui_bounds(const std::shared_ptr<UI::Object>& object) {
     rshapes::draw_rectangle_outline(bounds, 1.0f, default_palette::red);
 
     if (object->type() == UI::ObjectType::Button) {
-        const auto* button = object->as<UI::Button>();
-        const auto& inner_label = button->label();
+        const auto& button = object->as_ref<UI::Button>();
+        const auto& inner_label = button.label();
         draw_ui_bounds(inner_label);
     }
 }
