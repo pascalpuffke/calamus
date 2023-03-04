@@ -6,6 +6,7 @@
 #include <util/formatter.h>
 #include <util/types.h>
 #include <vector>
+#include <functional>
 
 namespace calamus {
 
@@ -23,7 +24,6 @@ struct WindowProperties {
     IntSize size; // [GetScreenWidth(), GetScreenHeight()]
     IntPosition position; // SetWindowPosition(int, int)
     i32 monitor; // SetWindowMonitor(int)
-    f32 opacity; // SetWindowOpacity(float)
 };
 
 class Window final {
@@ -52,16 +52,15 @@ public:
 
     void set_minimum_size(IntSize);
     void set_size(IntSize);
+    void set_resizable(bool);
 
     void set_position(IntPosition);
 
     void set_monitor(i32);
 
-    void set_opacity(f32); // Does anyone use this?
-
-    using resize_callback = void (*)(IntSize);
+    using resize_callback = std::function<void(IntSize)>;
     void install_resize_callback(resize_callback);
-    using move_callback = void (*)(IntPosition);
+    using move_callback = std::function<void(IntPosition)>;
     void install_move_callback(move_callback);
 
     [[nodiscard]] auto should_close() const noexcept { return m_properties.should_close; }
@@ -77,7 +76,6 @@ public:
     [[nodiscard]] auto size() const noexcept { return m_properties.size; }
     [[nodiscard]] auto position() const noexcept { return m_properties.position; }
     [[nodiscard]] auto monitor() const noexcept { return m_properties.monitor; }
-    [[nodiscard]] auto opacity() const noexcept { return m_properties.opacity; }
     [[nodiscard]] const auto& properties() const noexcept { return m_properties; }
 
 private:
@@ -92,7 +90,7 @@ private:
 
 // this sucks. this could surely be automated.
 FORMATTER(calamus::WindowProperties,
-    "WindowProperties(should_close={},\n\tready={},\n\tfullscreen={},\n\thidden={},\n\tmaximized={},\n\tminimized={},\n\tfocused={},\n\tcursor_visible={},\n\tcursor_enabled={},\n\tmin_size={},\n\tsize={},\n\tposition={},\n\tmonitor={},\n\topacity={})",
+    "WindowProperties(should_close={},\n\tready={},\n\tfullscreen={},\n\thidden={},\n\tmaximized={},\n\tminimized={},\n\tfocused={},\n\tcursor_visible={},\n\tcursor_enabled={},\n\tmin_size={},\n\tsize={},\n\tposition={},\n\tmonitor={})",
     value.should_close,
     value.ready,
     value.fullscreen,
@@ -105,5 +103,4 @@ FORMATTER(calamus::WindowProperties,
     value.min_size,
     value.size,
     value.position,
-    value.monitor,
-    value.opacity)
+    value.monitor)

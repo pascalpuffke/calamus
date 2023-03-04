@@ -14,7 +14,7 @@ using namespace wrapper;
 
 class RenderingScope {
 public:
-    USED explicit RenderingScope([[maybe_unused]] const Camera& camera, std::function<void()> render, std::function<void()> ui)
+    USED explicit RenderingScope(std::function<void()> render, std::function<void()> ui)
         : render_function(std::move(render))
         , ui_function(std::move(ui)) {
         rcore::begin_drawing();
@@ -34,29 +34,22 @@ private:
 
 Renderer::Renderer() = default;
 
-static void on_resize(IntSize size) {
-    LOG_DEBUG("resized: {}", size);
-}
-
-static void on_move(IntPosition position) {
-    LOG_DEBUG("moved: {}", position);
-}
-
 void Renderer::attach(Window* window) {
     m_window = window;
     m_window->refresh();
-    m_window->install_resize_callback(on_resize);
-    m_window->install_move_callback(on_move);
-    m_camera.set_target(IntPosition {
-        m_window->size().width / 2,
-        m_window->size().height / 2 });
+    m_window->install_resize_callback([](auto new_size) {
+        LOG_DEBUG("resized: {}", new_size);
+    });
+    m_window->install_move_callback([](auto new_position) {
+        LOG_DEBUG("moved: {}", new_position);
+    });
 }
 
 void Renderer::start() {
     VERIFY_PTR(m_window);
 
     while (!m_window->should_close()) {
-        RenderingScope scope { m_camera,
+        RenderingScope scope {
             [this]() {
                 // TODO this should absolutely NOT be inside the renderer.
                 if (rcore::is_key_pressed(Key::W))

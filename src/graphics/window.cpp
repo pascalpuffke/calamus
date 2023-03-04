@@ -6,12 +6,14 @@
 
 namespace calamus {
 
+static constexpr u32 FLAG_RESIZABLE = 0x04;
+
 using namespace wrapper;
 
 void Window::init() {
     const auto* config = VERIFY_PTR(state.config);
     rcore::init_window(IntSize { config->width, config->height }, m_title);
-    rcore::set_window_state(0x04);
+    rcore::set_window_state(FLAG_RESIZABLE);
 
     const auto monitor = rcore::get_current_monitor();
     const auto refresh = rcore::get_monitor_refresh_rate(monitor);
@@ -27,7 +29,6 @@ void Window::init() {
 
     m_properties.cursor_enabled = true;
     m_properties.min_size = IntSize { 0, 0 }; // I guess this is the default?
-    m_properties.opacity = 1.0f;
     m_properties.monitor = monitor;
 }
 
@@ -46,7 +47,7 @@ void Window::refresh() {
     const auto new_size = rcore::get_screen_size();
     if (new_size != current_size) {
         for (const auto& callback : m_resize_callbacks) {
-            (*callback)(new_size);
+            callback(new_size);
         }
         m_properties.size = new_size;
     }
@@ -55,7 +56,7 @@ void Window::refresh() {
     const auto new_position = rcore::get_window_position();
     if (new_position != current_position) {
         for (const auto& callback : m_move_callbacks) {
-            (*callback)(new_position);
+            callback(new_position);
         }
         m_properties.position = new_position;
     }
@@ -112,6 +113,14 @@ void Window::set_size(IntSize size) {
     rcore::set_window_size(size);
 }
 
+void Window::set_resizable(bool resizable) {
+    if (resizable) {
+        rcore::set_window_state(~FLAG_RESIZABLE);
+    } else {
+        rcore::set_window_state(FLAG_RESIZABLE);
+    }
+}
+
 void Window::set_position(IntPosition position) {
     m_properties.position = position;
     rcore::set_window_position(position);
@@ -120,13 +129,6 @@ void Window::set_position(IntPosition position) {
 void Window::set_monitor(i32 monitor_index) {
     m_properties.monitor = monitor_index;
     rcore::set_window_monitor(monitor_index);
-}
-
-void Window::set_opacity(f32 opacity) {
-    m_properties.opacity = opacity;
-    // SetWindowOpacity(opacity);
-    // For some reason, even though this function is documented on the website,
-    // it is not actually present. Weird. https://www.raylib.com/cheatsheet/cheatsheet.html
 }
 
 void Window::install_resize_callback(resize_callback callback) {
