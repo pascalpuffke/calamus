@@ -16,8 +16,7 @@ namespace calamus {
 
 constexpr static auto toml_path = std::string_view { "../config.toml" };
 
-// Exclusively for raylib logging
-void log_callback(i32 level, const char* text, va_list args) {
+void raylib_log_callback(i32 level, const char* text, va_list args) {
     if (!state.config->raylib_log)
         return;
     if (level == LOG_TRACE)
@@ -163,8 +162,9 @@ Result<void> load_resources() {
     }
 
     auto fonts = TRY(loader->find_fonts());
-    font_manager->load_font(Resources::FontType::Monospace, fonts[Resources::FontType::Monospace]);
-    font_manager->load_font(Resources::FontType::Regular, fonts[Resources::FontType::Regular]);
+    for (const auto& [type, path] : fonts) {
+        TRY(font_manager->load_font(type, path));
+    }
 
     return Result<void>::success();
 }
@@ -188,7 +188,7 @@ int main() {
     state.renderer = renderer.get();
 
     // Has to be the first raylib call, otherwise it will not use a custom log callback
-    SetTraceLogCallback(log_callback);
+    SetTraceLogCallback(raylib_log_callback);
 
     window->init();
     window->set_title("dingus");
