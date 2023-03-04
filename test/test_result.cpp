@@ -5,7 +5,7 @@
 using namespace calamus;
 
 TEST(Result, ConstructWithValue) {
-    const auto result = Result<i32> { 63014 };
+    constexpr const auto result = Result<i32> { 63014 };
 
     EXPECT_TRUE(result.has_value());
     EXPECT_FALSE(result.has_error());
@@ -33,7 +33,7 @@ TEST(Result, ConstructWithFormattedError) {
 }
 
 TEST(Result, Match) {
-    auto positive_result = Result<i32> { 1 };
+    constexpr auto positive_result = Result<i32> { 1 };
     auto negative_result = Result<i32> { Error { "" } };
 
     auto success = false;
@@ -52,7 +52,7 @@ TEST(Result, Match) {
 }
 
 TEST(Result, ValueOr) {
-    auto positive_result = Result<i32> { 2 };
+    constexpr auto positive_result = Result<i32> { 2 };
     auto negative_result = Result<i32> { Error { "" } };
 
     auto value = positive_result.value_or(4);
@@ -85,7 +85,7 @@ TEST(Result, ReleaseValue) {
 }
 
 TEST(Result, TryMacro) {
-    auto positive_result = Result<i32> { 2 };
+    constexpr auto positive_result = Result<i32> { 2 };
     auto negative_result = Result<i32> { Error { "henlo" } };
 
     const auto some_function = [&]() -> Result<i32> {

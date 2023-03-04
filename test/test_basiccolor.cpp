@@ -4,7 +4,7 @@
 using namespace calamus;
 
 TEST(BasicColor, ConstructParts) {
-    auto color = BasicColor<u8>::from_parts(0xDE, 0xAD, 0xBE);
+    constexpr auto color = BasicColor<u8>::from_parts(0xDE, 0xAD, 0xBE);
 
     EXPECT_EQ(color.r, 0xDE);
     EXPECT_EQ(color.g, 0xAD);
@@ -13,7 +13,7 @@ TEST(BasicColor, ConstructParts) {
 }
 
 TEST(BasicColor, ConstructPartsWithAlpha) {
-    auto color = BasicColor<u8>::from_parts(0xDE, 0xAD, 0xBE, 0xEF);
+    constexpr auto color = BasicColor<u8>::from_parts(0xDE, 0xAD, 0xBE, 0xEF);
 
     EXPECT_EQ(color.r, 0xDE);
     EXPECT_EQ(color.g, 0xAD);
@@ -22,7 +22,7 @@ TEST(BasicColor, ConstructPartsWithAlpha) {
 }
 
 TEST(BasicColor, ConstructHex) {
-    auto color = BasicColor<u8>::from_hex(0xDEADBE);
+    constexpr auto color = BasicColor<u8>::from_hex(0xDEADBE);
 
     EXPECT_EQ(color.r, 0xDE);
     EXPECT_EQ(color.g, 0xAD);
@@ -31,7 +31,7 @@ TEST(BasicColor, ConstructHex) {
 }
 
 TEST(BasicColor, ConstructHexWithAlpha) {
-    auto color = BasicColor<u8>::from_hex(0xDEADBEEF);
+    constexpr auto color = BasicColor<u8>::from_hex(0xDEADBEEF);
 
     EXPECT_EQ(color.r, 0xAD);
     EXPECT_EQ(color.g, 0xBE);
@@ -40,9 +40,9 @@ TEST(BasicColor, ConstructHexWithAlpha) {
 }
 
 TEST(BasicColor, Addition) {
-    const auto a = BasicColor<u8>::from_parts(100, 100, 100, 0);
-    const auto b = BasicColor<u8>::from_parts(255, 0, 42);
-    const auto c = a + b;
+    constexpr const auto a = BasicColor<u8>::from_parts(100, 100, 100, 0);
+    constexpr const auto b = BasicColor<u8>::from_parts(255, 0, 42);
+    constexpr const auto c = a + b;
 
     EXPECT_EQ(c.r, 255);
     EXPECT_EQ(c.g, 100);
@@ -51,9 +51,9 @@ TEST(BasicColor, Addition) {
 }
 
 TEST(BasicColor, Subtraction) {
-    const auto a = BasicColor<u8>::from_parts(100, 100, 100);
-    const auto b = BasicColor<u8>::from_parts(255, 0, 42);
-    const auto c = a - b;
+    constexpr const auto a = BasicColor<u8>::from_parts(100, 100, 100);
+    constexpr const auto b = BasicColor<u8>::from_parts(255, 0, 42);
+    constexpr const auto c = a - b;
 
     EXPECT_EQ(c.r, 0);
     EXPECT_EQ(c.g, 100);
@@ -63,7 +63,7 @@ TEST(BasicColor, Subtraction) {
 
 TEST(BasicColor, AdditionAssignment) {
     auto a = BasicColor<u8>::from_parts(100, 100, 100, 0);
-    const auto b = BasicColor<u8>::from_parts(255, 0, 42);
+    constexpr const auto b = BasicColor<u8>::from_parts(255, 0, 42);
     a += b;
 
     EXPECT_EQ(a.r, 255);
@@ -74,7 +74,7 @@ TEST(BasicColor, AdditionAssignment) {
 
 TEST(BasicColor, SubtractionAssignment) {
     auto a = BasicColor<u8>::from_parts(100, 100, 100);
-    const auto b = BasicColor<u8>::from_parts(255, 0, 42);
+    constexpr const auto b = BasicColor<u8>::from_parts(255, 0, 42);
     a -= b;
 
     EXPECT_EQ(a.r, 0);
@@ -84,8 +84,8 @@ TEST(BasicColor, SubtractionAssignment) {
 }
 
 TEST(BasicColor, Equality) {
-    const auto a = BasicColor<u8>::from_hex(0);
-    const auto b = BasicColor<u8>::from_hex(0xFFFFFFFF);
+    constexpr const auto a = BasicColor<u8>::from_hex(0);
+    constexpr const auto b = BasicColor<u8>::from_hex(0xFFFFFFFF);
 
     EXPECT_LT(a, b);
     EXPECT_GT(b, a);

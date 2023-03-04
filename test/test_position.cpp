@@ -4,8 +4,8 @@
 using namespace calamus;
 
 TEST(Position, ConstructionAndAccessors) {
-    const IntPosition a = { 123, 456 };
-    const IntPosition b = IntPosition { 10 }; // Explicit
+    constexpr const IntPosition a = { 123, 456 };
+    constexpr const IntPosition b = IntPosition { 10 }; // Explicit
 
     EXPECT_EQ(a.x, 123);
     EXPECT_EQ(a.y, 456);
@@ -14,34 +14,34 @@ TEST(Position, ConstructionAndAccessors) {
 }
 
 TEST(Position, Addition) {
-    const auto a = IntPosition { 4, 10 };
-    const auto b = IntPosition { 6 };
-    const auto c = a + b;
+    constexpr const auto a = IntPosition { 4, 10 };
+    constexpr const auto b = IntPosition { 6 };
+    constexpr const auto c = a + b;
 
     EXPECT_EQ(c.x, 10);
     EXPECT_EQ(c.y, 16);
 }
 
 TEST(Position, Subtraction) {
-    const auto a = IntPosition { 4, 10 };
-    const auto b = IntPosition { 6 };
-    const auto c = a - b;
+    constexpr const auto a = IntPosition { 4, 10 };
+    constexpr const auto b = IntPosition { 6 };
+    constexpr const auto c = a - b;
 
     EXPECT_EQ(c.x, -2);
     EXPECT_EQ(c.y, 4);
 }
 
 TEST(Position, Multiplication) {
-    const auto a = IntPosition { 10, 20 };
-    const auto b = a * 2;
+    constexpr const auto a = IntPosition { 10, 20 };
+    constexpr const auto b = a * 2;
 
     EXPECT_EQ(b.x, 20);
     EXPECT_EQ(b.y, 40);
 }
 
 TEST(Position, Division) {
-    const auto a = IntPosition { 10, 20 };
-    const auto b = a / 2;
+    constexpr const auto a = IntPosition { 10, 20 };
+    constexpr const auto b = a / 2;
 
     EXPECT_EQ(b.x, 5);
     EXPECT_EQ(b.y, 10);
@@ -49,7 +49,7 @@ TEST(Position, Division) {
 
 TEST(Position, AdditionAssignment) {
     auto a = IntPosition { 100, 100 };
-    const auto b = IntPosition { 16, 32 };
+    constexpr const auto b = IntPosition { 16, 32 };
     a += b;
 
     EXPECT_EQ(a.x, 116);
@@ -58,7 +58,7 @@ TEST(Position, AdditionAssignment) {
 
 TEST(Position, SubtractionAssignment) {
     auto a = IntPosition { 116, 132 };
-    const auto b = IntPosition { 16, 32 };
+    constexpr const auto b = IntPosition { 16, 32 };
     a -= b;
 
     EXPECT_EQ(a.x, 100);
@@ -66,8 +66,8 @@ TEST(Position, SubtractionAssignment) {
 }
 
 TEST(Position, Equality) {
-    const auto a = IntPosition { 16, 32 };
-    const auto b = IntPosition { 24, 48 };
+    constexpr const auto a = IntPosition { 16, 32 };
+    constexpr const auto b = IntPosition { 24, 48 };
 
     EXPECT_LT(a, b);
     EXPECT_GT(b, a);

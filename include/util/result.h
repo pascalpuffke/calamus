@@ -27,29 +27,29 @@ concept SameInvokeResult = std::is_same_v<std::remove_cvref_t<std::invoke_result
 /// An Error type that only holds a string message.
 class Error {
 public:
-    explicit Error(std::string&& message)
+    constexpr explicit Error(std::string&& message)
         : m_message(std::move(message)) {
     }
-    explicit Error(const char* message)
+    constexpr explicit Error(const char* message)
         : m_message(message) {
     }
 
     template <typename... T>
-    static Error formatted(fmt::format_string<T...> fmt, T&&... args) {
+    constexpr static Error formatted(fmt::format_string<T...> fmt, T&&... args) {
         return Error {
             fmt::vformat(fmt, fmt::make_format_args(args...))
         };
     }
 
-    ~Error() = default;
-    Error(const Error&) = default;
-    Error(Error&&) noexcept = default;
+    constexpr ~Error() = default;
+    constexpr Error(const Error&) = default;
+    constexpr Error(Error&&) noexcept = default;
 
-    bool operator==(const Error& other) const {
+    constexpr bool operator==(const Error& other) const {
         return m_message == other.m_message;
     }
 
-    [[nodiscard]] const std::string& message() const {
+    [[nodiscard]] constexpr std::string_view message() const {
         return m_message;
     }
 
@@ -135,7 +135,7 @@ public:
     // I don't think it makes much sense to create more error accessors than const&
 
     template <typename ValueFn, typename ErrorFn>
-    constexpr void match(ValueFn&& on_value, ErrorFn&& on_error) {
+    constexpr void match(ValueFn&& on_value, ErrorFn&& on_error) const {
         if (has_value())
             on_value(value());
         else
