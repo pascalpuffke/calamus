@@ -29,6 +29,7 @@ set(MAIN_SOURCES
         src/ui/ui_button.cpp
         src/ui/ui_label.cpp
         src/ui/ui_screen.cpp
+        src/util/files.cpp
         src/util/raylib/raylib_wrapper.cpp)
 
 set(SCRIPT_SOURCES
