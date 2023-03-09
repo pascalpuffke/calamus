@@ -271,14 +271,6 @@ using IntRect = Rectangle<i32>;
 
 }
 
-#define DEFAULT_FORMAT_PARSE()                                 \
-    constexpr auto parse(fmt::format_parse_context& context) { \
-        auto end = context.begin();                            \
-        if (end != context.end() && (*++end) != '}')           \
-            throw fmt::format_error("Invalid format");         \
-        return end;                                            \
-    }
-
 template <calamus::Arithmetic T>
 struct fmt::formatter<calamus::BasicColor<T>> {
     DEFAULT_FORMAT_PARSE()
@@ -314,5 +306,3 @@ struct fmt::formatter<calamus::Size<T>> {
         return format_to(context.out(), "({}x{})", value.width, value.height);
     }
 };
-
-#undef DEFAULT_FORMAT_PARSE

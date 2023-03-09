@@ -19,3 +19,11 @@
             return format_to(context.out(), FORMAT, __VA_ARGS__);                               \
         }                                                                                       \
     };
+
+#define DEFAULT_FORMAT_PARSE()                                 \
+    constexpr auto parse(fmt::format_parse_context& context) { \
+        auto end = context.begin();                            \
+        if (end != context.end() && (*++end) != '}')           \
+            throw fmt::format_error("Invalid format");         \
+        return end;                                            \
+    }
