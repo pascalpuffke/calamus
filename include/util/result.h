@@ -3,6 +3,7 @@
 #include <optional>
 #include <util/assert.h>
 #include <util/formatter.h>
+#include <util/typename.h>
 
 namespace calamus {
 
@@ -193,6 +194,32 @@ private:
 }
 
 FORMATTER(calamus::Error, "{}", value.message())
+
+template <typename ErrorT>
+    requires fmt::is_formattable<ErrorT>::value
+struct fmt::formatter<calamus::Result<void, ErrorT>> {
+    DEFAULT_FORMAT_PARSE()
+
+    template <typename FormatContext>
+    auto format(const calamus::Result<void, ErrorT>& result, FormatContext& context) -> decltype(context.out()) {
+        if (result.has_error())
+            return fmt::format_to(context.out(), "{}", result.error());
+        return fmt::format_to(context.out(), "<void result>");
+    }
+};
+
+template <typename ValueT, typename ErrorT>
+    requires fmt::is_formattable<ValueT>::value && fmt::is_formattable<ErrorT>::value
+struct fmt::formatter<calamus::Result<ValueT, ErrorT>> {
+    DEFAULT_FORMAT_PARSE()
+
+    template <typename FormatContext>
+    auto format(const calamus::Result<ValueT, ErrorT>& result, FormatContext& context) -> decltype(context.out()) {
+        if (result.has_value())
+            return fmt::format_to(context.out(), "{}", result.value());
+        return fmt::format_to(context.out(), "{}", result.error());
+    }
+};
 
 // ✨ Inspired by SerenityOS ✨
 #define TRY(expr) ({                           \
