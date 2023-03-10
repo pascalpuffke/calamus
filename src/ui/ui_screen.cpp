@@ -47,7 +47,7 @@ void ScreenManager::register_screen(Screen screen, ScreenLayout&& layout) {
     m_layouts[screen] = std::move(layout);
 }
 
-const ScreenLayout& ScreenManager::layout(Screen screen) const {
+ScreenLayout& ScreenManager::layout(Screen screen) {
     auto result = m_layouts.find(screen);
     ASSERT_MSG(result != m_layouts.end(), "No layout registered for requested screen");
 

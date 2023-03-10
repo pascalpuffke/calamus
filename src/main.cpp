@@ -55,17 +55,17 @@ void register_screens() {
     auto* manager = VERIFY_PTR(state.screen_manager);
 
     manager->register_screen(Screen::Game, UI::ScreenLayout::create<UI::FixedLayout>({}));
-    auto editor_layout = UI::GridLayout {};
-    editor_layout.set_columns_homogeneous(true);
-    editor_layout.set_rows_homogeneous(true);
-    editor_layout.set_column_count(3);
-    editor_layout.set_row_count(2);
-    editor_layout.set_column_spacing(10);
-    editor_layout.set_row_spacing(10);
+    auto editor_layout = std::make_unique<UI::GridLayout>();
+    editor_layout->set_columns_homogeneous(true);
+    editor_layout->set_rows_homogeneous(true);
+    editor_layout->set_column_count(3);
+    editor_layout->set_row_count(2);
+    editor_layout->set_column_spacing(10);
+    editor_layout->set_row_spacing(10);
 
     // clang-format off
     manager->register_screen(Screen::Editor,
-        UI::ScreenLayout::create(editor_layout, {
+        UI::ScreenLayout::create(std::move(editor_layout), {
             UI::Button::create(UI::Label::create("1", font_size), {}, {}, [&](auto) { LOG_DEBUG("1") }),
             UI::Button::create(UI::Label::create("2", font_size), {}, {}, [&](auto) { LOG_DEBUG("2") }),
             UI::Button::create(UI::Label::create("3", font_size), {}, {}, [&](auto) { LOG_DEBUG("3") }),

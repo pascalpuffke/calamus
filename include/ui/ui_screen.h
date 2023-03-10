@@ -14,36 +14,42 @@ namespace calamus::UI {
 struct ScreenLayout {
     using object_ptr = std::shared_ptr<Object>;
 
+    ScreenLayout(std::unique_ptr<Layout> layout, std::vector<object_ptr> children)
+        : m_layout(std::move(layout))
+        , m_children(std::move(children)) { }
+    explicit ScreenLayout() = default;
+
     template <typename LayoutClass>
         requires std::is_base_of_v<Layout, LayoutClass>
     [[nodiscard]] static ScreenLayout create(std::vector<object_ptr>&& children) {
-        const auto layout = std::make_unique<LayoutClass>();
-        layout->set_parent_rect(IntRect { IntPosition { 0, 0 }, state.window->size() });
-        layout->apply(children);
+        auto layout = std::make_unique<LayoutClass>();
+        auto screen = ScreenLayout { std::move(layout), std::move(children) };
 
-        for (auto& object : children)
-            object->set_rect(layout->get(object));
+        screen.rebuild_layout();
 
-        return ScreenLayout { std::move(children) };
+        return screen;
     }
 
-    [[nodiscard]] static ScreenLayout create(Layout& layout, std::vector<object_ptr>&& children) {
-        layout.set_parent_rect(IntRect { IntPosition { 0, 0 }, state.window->size() });
-        layout.apply(children);
+    [[nodiscard]] static ScreenLayout create(std::unique_ptr<Layout> layout, std::vector<object_ptr>&& children) {
+        auto screen = ScreenLayout { std::move(layout), std::move(children) };
 
-        for (auto& object : children)
-            object->set_rect(layout.get(object));
+        screen.rebuild_layout();
 
-        return ScreenLayout { std::move(children) };
+        return screen;
     }
 
-    explicit ScreenLayout(std::vector<object_ptr> children)
-        : m_children(std::move(children)) { }
-    explicit ScreenLayout() = default;
+    void rebuild_layout() {
+        m_layout->set_parent_rect(IntRect { IntPosition { 0, 0 }, state.window->size() });
+        m_layout->apply(m_children);
+
+        for (auto& object : m_children)
+            object->set_rect(m_layout->get(object));
+    }
 
     [[nodiscard]] const auto& children() const noexcept { return m_children; }
 
 private:
+    std::unique_ptr<Layout> m_layout { nullptr };
     std::vector<object_ptr> m_children {};
 };
 
@@ -60,7 +66,7 @@ public:
     void check_hover(IntPosition);
     void check_click(MouseButton, IntPosition);
     void register_screen(Screen, ScreenLayout&&);
-    [[nodiscard]] const ScreenLayout& layout(Screen) const;
+    [[nodiscard]] ScreenLayout& layout(Screen);
 
 private:
     std::unordered_map<Screen, ScreenLayout> m_layouts;

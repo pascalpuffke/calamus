@@ -1,4 +1,3 @@
-#include <functional>
 #include <graphics/renderer.h>
 #include <resources/textures.h>
 #include <ui/ui_button.h>
@@ -39,6 +38,9 @@ void Renderer::attach(Window* window) {
     m_window->refresh();
     m_window->install_resize_callback([](auto new_size) {
         LOG_DEBUG("resized: {}", new_size);
+
+        auto& screen = state.screen_manager->layout(state.current_screen);
+        screen.rebuild_layout();
     });
     m_window->install_move_callback([](auto new_position) {
         LOG_DEBUG("moved: {}", new_position);
@@ -80,7 +82,8 @@ void Renderer::start() {
                 draw_ui();
                 m_window->refresh();
                 ++m_frame;
-            } };
+            }
+        };
     }
 }
 
