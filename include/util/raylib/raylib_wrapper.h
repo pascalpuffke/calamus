@@ -16,9 +16,10 @@
 
 namespace calamus::wrapper {
 
-void draw_rect_with_outline(const IntRect& rect, Color background, Color outline, f32 thickness = 1.0f);
+void draw_rect_with_outline(const IntRect&, Color background, Color outline, f32 thickness = 1.0f);
 
 namespace rcore {
+    // Window
     void init_window(IntSize, std::string_view title);
     bool window_should_close();
     void close_window();
@@ -36,6 +37,7 @@ namespace rcore {
     void maximize_window();
     void minimize_window();
     void restore_window();
+    void set_window_icon(const std::filesystem::path&);
     void set_window_title(std::string_view);
     void set_window_position(IntPosition);
     void set_window_monitor(i32);
@@ -47,6 +49,7 @@ namespace rcore {
     IntSize get_screen_size();
     IntSize get_render_size();
 
+    // Monitor
     i32 get_monitor_count();
     i32 get_current_monitor();
     IntPosition get_monitor_position(i32);
@@ -55,6 +58,7 @@ namespace rcore {
     i32 get_monitor_refresh_rate(i32);
     std::string_view get_monitor_name(i32);
 
+    // Cursor
     void show_cursor();
     void hide_cursor();
     bool is_cursor_hidden();
@@ -62,16 +66,18 @@ namespace rcore {
     void disable_cursor();
     bool is_cursor_on_screen();
 
+    // Basic drawing
     void clear_background(Color);
     void begin_drawing();
     void end_drawing();
     void begin_mode_2d(const Camera&);
     void end_mode_2d();
 
+    // Input
     bool is_key_pressed(Key);
     bool is_key_down(Key);
     bool is_key_released(Key);
-    bool is_key_Up(Key);
+    bool is_key_up(Key);
 
     bool is_mouse_button_pressed(MouseButton);
     bool is_mouse_button_down(MouseButton);
@@ -85,20 +91,37 @@ namespace rcore {
     IntPosition get_mouse_delta();
     f32 get_mouse_wheel_move();
 
+    bool is_gamepad_available(i32);
+    std::string_view get_gamepad_name(i32);
+    bool is_gamepad_button_pressed(i32, i32 button);
+    bool is_gamepad_button_released(i32, i32 button);
+    bool is_gamepad_button_down(i32, i32 button);
+    bool is_gamepad_button_up(i32, i32 button);
+    i32 get_gamepad_last_button();
+    i32 get_gamepad_axis_count(i32);
+    f32 get_gamepad_axis_movement(i32, i32 axis);
+    i32 set_gamepad_mappings(std::string_view);
+
+    // Timing
     void set_target_fps(i32);
     i32 get_fps();
     f32 get_frame_time();
+    f64 get_elapsed_time();
+
+    // Misc. functions
+    void take_screenshot(const std::filesystem::path&);
+    void open_url(std::string_view);
 }
 
 namespace rshapes {
-    void draw_pixel(IntPosition position, Color color);
-    void draw_line(IntPosition start, IntPosition end, f32 thickness, Color color);
-    void draw_circle(IntPosition center, f32 radius, Color color);
-    void draw_circle_outline(IntPosition center, f32 radius, Color color);
-    void draw_rectangle(const IntRect& rectangle, Color color);
-    void draw_rectangle_outline(const IntRect& rectangle, f32 thickness, Color color);
-    void draw_triangle(IntPosition p1, IntPosition p2, IntPosition p3, Color color);
-    void draw_triangle_outline(IntPosition p1, IntPosition p2, IntPosition p3, Color color);
+    void draw_pixel(IntPosition, Color);
+    void draw_line(IntPosition start, IntPosition end, f32 thickness, Color);
+    void draw_circle(IntPosition center, f32 radius, Color);
+    void draw_circle_outline(IntPosition center, f32 radius, Color);
+    void draw_rectangle(const IntRect&, Color);
+    void draw_rectangle_outline(const IntRect&, f32 thickness, Color);
+    void draw_triangle(IntPosition p1, IntPosition p2, IntPosition p3, Color);
+    void draw_triangle_outline(IntPosition p1, IntPosition p2, IntPosition p3, Color);
 }
 
 namespace rtext {

@@ -77,6 +77,15 @@ namespace rcore {
     void maximize_window() { MaximizeWindow(); }
     void minimize_window() { MinimizeWindow(); }
     void restore_window() { RestoreWindow(); }
+    void set_window_icon(const std::filesystem::path& icon_path) {
+        ASSERT(exists(icon_path));
+        ASSERT(is_regular_file(icon_path));
+
+        auto image = LoadImage(icon_path.c_str());
+        ASSERT(image.width > 0);
+        SetWindowIcon(image);
+        UnloadImage(image);
+    }
     void set_window_title(std::string_view title) { SetWindowTitle(title.data()); }
     void set_window_position(IntPosition position) { SetWindowPosition(position.x, position.y); }
     void set_window_monitor(i32 monitor) { SetWindowMonitor(monitor); }
@@ -152,9 +161,26 @@ namespace rcore {
     IntPosition get_mouse_delta() { return ca_pos_from(GetMouseDelta()); }
     f32 get_mouse_wheel_move() { return GetMouseWheelMove(); }
 
+    bool is_gamepad_available(i32 gamepad) { return IsGamepadAvailable(gamepad); }
+    std::string_view get_gamepad_name(i32 gamepad) { return GetGamepadName(gamepad); }
+    bool is_gamepad_button_pressed(i32 gamepad, i32 button) { return IsGamepadButtonPressed(gamepad, button); }
+    bool is_gamepad_button_released(i32 gamepad, i32 button) { return IsGamepadButtonReleased(gamepad, button); }
+    bool is_gamepad_button_down(i32 gamepad, i32 button) { return IsGamepadButtonDown(gamepad, button); }
+    bool is_gamepad_button_up(i32 gamepad, i32 button) { return IsGamepadButtonUp(gamepad, button); }
+    i32 get_gamepad_last_button() { return GetGamepadButtonPressed(); }
+    i32 get_gamepad_axis_count(i32 gamepad) { return GetGamepadAxisCount(gamepad); }
+    f32 get_gamepad_axis_movement(i32 gamepad, i32 axis) { return GetGamepadAxisMovement(gamepad, axis); }
+    i32 set_gamepad_mappings(std::string_view mappings) { return SetGamepadMappings(mappings.data()); }
+
     void set_target_fps(i32 fps) { SetTargetFPS(fps); }
     i32 get_fps() { return GetFPS(); }
     f32 get_frame_time() { return GetFrameTime(); }
+    f64 get_elapsed_time() { return GetTime(); }
+
+    void take_screenshot(const std::filesystem::path& screenshot_path) {
+        TakeScreenshot(screenshot_path.c_str());
+    }
+    void open_url(std::string_view url) { OpenURL(url.data()); }
 }
 
 namespace rshapes {
