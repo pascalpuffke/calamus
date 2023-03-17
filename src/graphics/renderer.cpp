@@ -40,7 +40,7 @@ void Renderer::attach(Window* window) {
         LOG_DEBUG("resized: {}", new_size);
 
         auto& screen = state.screen_manager->layout(state.current_screen);
-        screen.rebuild_layout();
+        screen.rebuild_layout(new_size);
     });
     m_window->install_move_callback([](auto new_position) {
         LOG_DEBUG("moved: {}", new_position);
