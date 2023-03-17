@@ -8,6 +8,7 @@
 #include <ui/ui_button.h>
 #include <ui/ui_screen.h>
 #include <util/common.h>
+#include <util/raylib/raylib_wrapper.h>
 
 static calamus::State global_state;
 calamus::State& state = global_state;
@@ -193,6 +194,16 @@ int main() {
     window->init();
     window->set_title("dingus");
     renderer->attach(window.get());
+
+    // Raylib supports a maximum of 4 gamepads.
+    for (auto i = 0; i < 4; i++) {
+        if (!wrapper::rcore::is_gamepad_available(i))
+            continue;
+
+        auto name = wrapper::rcore::get_gamepad_name(i);
+        auto axis = wrapper::rcore::get_gamepad_axis_count(i);
+        LOG_INFO("Found gamepad {}: '{}', {} axis", i, name, axis);
+    }
 
     if (auto resources_result = load_resources(); resources_result.has_error()) {
         LOG_ERROR("Error loading resources: {}", resources_result.error())
