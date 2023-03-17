@@ -1,12 +1,12 @@
 #pragma once
 
+#include <functional>
 #include <string>
 #include <string_view>
 #include <ui/structs.h>
 #include <util/formatter.h>
 #include <util/types.h>
 #include <vector>
-#include <functional>
 
 namespace calamus {
 
@@ -59,9 +59,9 @@ public:
     void set_monitor(i32);
 
     using resize_callback = std::function<void(IntSize)>;
-    void install_resize_callback(resize_callback);
+    void install_resize_callback(const resize_callback&);
     using move_callback = std::function<void(IntPosition)>;
-    void install_move_callback(move_callback);
+    void install_move_callback(const move_callback&);
 
     [[nodiscard]] auto should_close() const noexcept { return m_properties.should_close; }
     [[nodiscard]] auto is_ready() const noexcept { return m_properties.ready; }

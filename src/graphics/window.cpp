@@ -131,11 +131,11 @@ void Window::set_monitor(i32 monitor_index) {
     rcore::set_window_monitor(monitor_index);
 }
 
-void Window::install_resize_callback(resize_callback callback) {
+void Window::install_resize_callback(const resize_callback& callback) {
     m_resize_callbacks.emplace_back(callback);
 }
 
-void Window::install_move_callback(move_callback callback) {
+void Window::install_move_callback(const move_callback& callback) {
     m_move_callbacks.emplace_back(callback);
 }
 
