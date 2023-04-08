@@ -73,6 +73,10 @@ The project is built using cmake. Following options are exposed:
 
 Dependencies are automatically managed by [CPM](https://github.com/cpm-cmake/CPM.cmake).
 
+## Building on Linux
+
+Requirements: recent versions of `cmake`, `gcc`, `ninja` (optional)
+
 Using a fresh tree, you may build this abomination as follows (not recommended, better `rm -rf .` and run):
 
 ```shell
@@ -81,3 +85,18 @@ cd build
 cmake -GNinja -DCMAKE_BUILD_TYPE=Debug ..
 cmake --build . --parallel=$(nproc)
 ```
+
+## Building on macOS
+
+Get [Homebrew](https://brew.sh/) first, then install these from brew: `cmake`, `ninja`.
+
+Default Xcode clang compiler appears to work, gcc is untested.
+
+```shell
+mkdir build
+cd build
+cmake -GNinja -DCMAKE_BUILD_TYPE=Debug ..
+cmake --build . --parallel=$(sysctl -n hw.ncpu)
+```
+
+Ignore warnings about OpenGL being deprecated, we don't care.
