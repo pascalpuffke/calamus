@@ -9,7 +9,15 @@ namespace fs = std::filesystem;
 
 namespace calamus {
 
-static constexpr TomlConfig default_config = {
+// std::string does not appear to be constexpr here.
+// NOTE: Only tested against apple clang-1403.0.22.14.1 and libc++
+#ifdef __clang__
+#define MAYBE_CONSTEXPR_STD_STRING
+#else
+#define MAYBE_CONSTEXPR_STD_STRING constexpr
+#endif
+
+static MAYBE_CONSTEXPR_STD_STRING TomlConfig default_config = {
     .width = 800,
     .height = 600,
     .target_fps = 60,
@@ -22,12 +30,14 @@ static constexpr TomlConfig default_config = {
     .resources_root = "../res",
 };
 
+#undef MAYBE_CONSTEXPR_STD_STRING
+
 Result<TomlConfig> TomlConfigLoader::load(const fs::path& path) {
     if (!path.has_extension() || path.extension() != ".toml")
         return Error { "Path must end with .toml" };
 
     if (!fs::exists(path))
-        return Error::formatted("TOML config file does not exist: {}", fs::absolute(path));
+        return Error { "TOML config file does not exist" };
 
     auto config = TomlConfig {};
 
