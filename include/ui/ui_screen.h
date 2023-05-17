@@ -69,6 +69,7 @@ public:
     [[nodiscard]] ScreenLayout& layout(Screen);
 
 private:
+    ScreenLayout::object_ptr m_last_hovered_object { nullptr };
     std::unordered_map<Screen, ScreenLayout> m_layouts;
 };
 

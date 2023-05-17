@@ -15,19 +15,23 @@ template <Arithmetic T = i32>
 }
 
 void ScreenManager::check_hover(IntPosition position) {
+    // TODO: Do this in a proper front to back order (by highest z-index?)
     for (const auto& object : m_layouts[state.current_screen].children()) {
         if (!object->is_hoverable())
             continue;
 
         if (in_bounds(position, object->rect())) {
             object->on_hover_begin(position);
+            m_last_hovered_object = object;
+
             // Only one object can be in a hovered state at a time
-            // TODO: Do this in a proper front to back order (by highest z-index?)
             return;
         }
-        // TODO: Call only once, and only if the object was previously hovered
-        //       Right now this spams on_hover_end() to *all* hoverable objects on each frame
-        object->on_hover_end();
+
+        if (object == m_last_hovered_object) {
+            object->on_hover_end();
+            m_last_hovered_object = nullptr;
+        }
     }
 }
 

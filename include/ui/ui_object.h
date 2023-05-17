@@ -43,9 +43,6 @@ public:
 
     [[nodiscard]] virtual bool is_hoverable() const { return false; }
     virtual void on_hover_begin(IntPosition) {};
-    // NOTE: This method is called on *every* frame on *all* objects that are not currently hovered.
-    // You'd probably hope this is only called *once* as soon as the cursor stops hovering over
-    // the last object, but alas that's not how it is implemented.
     virtual void on_hover_end() {};
     [[nodiscard]] virtual bool is_clickable() const { return false; }
     virtual void on_click(MouseButton, IntPosition) {};
