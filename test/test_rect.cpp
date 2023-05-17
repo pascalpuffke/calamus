@@ -63,7 +63,7 @@ TEST(Rectangle, Division) {
 
 TEST(Rectangle, AdditionAssignment) {
     auto a = IntRect { 64, 64, 96, 128 };
-    constexpr const auto b = IntRect { 16, 16, 16, 16};
+    constexpr const auto b = IntRect { 16, 16, 16, 16 };
     a += b;
 
     EXPECT_EQ(a.x, 80);
@@ -74,7 +74,7 @@ TEST(Rectangle, AdditionAssignment) {
 
 TEST(Rectangle, SubtractionAssignment) {
     auto a = IntRect { 64, 64, 96, 128 };
-    constexpr const auto b = IntRect { 16, 16, 16, 16};
+    constexpr const auto b = IntRect { 16, 16, 16, 16 };
     a -= b;
 
     EXPECT_EQ(a.x, 48);
@@ -83,11 +83,10 @@ TEST(Rectangle, SubtractionAssignment) {
     EXPECT_EQ(a.height, 112);
 }
 
-
 TEST(Rectangle, ToPosition) {
     constexpr const auto rect = IntRect { 16, 32, 1, 1 };
     constexpr const auto pos = rect.to_position();
-    
+
     EXPECT_EQ(pos.x, 16);
     EXPECT_EQ(pos.y, 32);
 }

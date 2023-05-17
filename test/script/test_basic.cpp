@@ -12,18 +12,18 @@ TEST(Script, InterpreterReturnsOk) {
     const auto result = VM::interpret(source);
     VM::free_vm();
 
-    ASSERT_EQ(result, VM::InterpretResult::Ok);
+    EXPECT_EQ(result, VM::InterpretResult::Ok);
 }
 
 TEST(Script, CompileError) {
     VM::init_vm();
     const auto source = std::string_view { R"(
         this should not compile
-    )"};
+    )" };
     const auto result = VM::interpret(source);
     VM::free_vm();
 
-    ASSERT_EQ(result, VM::InterpretResult::CompileError);
+    EXPECT_EQ(result, VM::InterpretResult::CompileError);
 }
 
 TEST(Script, RuntimeError) {
@@ -34,9 +34,9 @@ TEST(Script, RuntimeError) {
         some_string + some_number;
         // This compiles fine, but adding a number to a string is illegal.
         // The compiler, as dumb as it is, doesn't know that and happily emits one addition op.
-    )"};
+    )" };
     const auto result = VM::interpret(source);
     VM::free_vm();
 
-    ASSERT_EQ(result, VM::InterpretResult::RuntimeError);
+    EXPECT_EQ(result, VM::InterpretResult::RuntimeError);
 }
