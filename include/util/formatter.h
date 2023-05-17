@@ -16,7 +16,7 @@
         }                                                                                       \
         template <typename FormatContext>                                                       \
         auto format(const TYPE& value, FormatContext& context) -> decltype(context.out()) {     \
-            return format_to(context.out(), FORMAT, __VA_ARGS__);                               \
+            return fmt::format_to(context.out(), FORMAT, __VA_ARGS__);                          \
         }                                                                                       \
     };
 

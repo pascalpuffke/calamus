@@ -36,7 +36,7 @@ struct BasicColor {
         const u8 red = (hex >> 16) & 0xFF;
         const u8 green = (hex >> 8) & 0xFF;
         const u8 blue = hex & 0xFF;
-        return { red, green, blue, static_cast<u8>(alpha ? alpha : 0xFF) };
+        return { red, green, blue, static_cast<u8>(alpha ?: 0xFF) };
     }
 
     static constexpr BasicColor<T> from_parts(T r, T g, T b, T a = std::numeric_limits<T>::max()) {
@@ -294,7 +294,7 @@ struct fmt::formatter<calamus::Position<T>> {
     DEFAULT_FORMAT_PARSE()
     template <typename FormatContext>
     auto format(const calamus::Position<T>& value, FormatContext& context) {
-        return format_to(context.out(), "({}, {})", value.x, value.y);
+        return fmt::format_to(context.out(), "({}, {})", value.x, value.y);
     }
 };
 
@@ -303,6 +303,6 @@ struct fmt::formatter<calamus::Size<T>> {
     DEFAULT_FORMAT_PARSE()
     template <typename FormatContext>
     auto format(const calamus::Size<T>& value, FormatContext& context) {
-        return format_to(context.out(), "({}x{})", value.width, value.height);
+        return fmt::format_to(context.out(), "({}x{})", value.width, value.height);
     }
 };
