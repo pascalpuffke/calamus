@@ -38,13 +38,7 @@ struct ScreenLayout {
         return screen;
     }
 
-    void rebuild_layout(IntSize new_size = state.window->size()) {
-        m_layout->set_parent_rect(IntRect { IntPosition { 0, 0 }, new_size });
-        m_layout->apply(m_children);
-
-        for (auto& object : m_children)
-            object->set_rect(m_layout->get(object));
-    }
+    void rebuild_layout(IntSize new_size = state.window->size());
 
     [[nodiscard]] const auto& children() const noexcept { return m_children; }
 

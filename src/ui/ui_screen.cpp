@@ -59,4 +59,16 @@ ScreenLayout& ScreenManager::layout(Screen screen) {
     return result->second;
 }
 
+void ScreenLayout::rebuild_layout(IntSize new_size) {
+    m_layout->set_parent_rect(IntRect { IntPosition { 0, 0 }, new_size });
+    m_layout->apply(m_children);
+
+    for (auto& object : m_children) {
+        object->set_rect(m_layout->get(object));
+
+        // workaround for buttons using wrong colors before being hovered the first time
+        object->on_hover_end();
+    }
+}
+
 }
