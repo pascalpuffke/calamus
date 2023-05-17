@@ -18,7 +18,8 @@ public:
         u32 gl_id,
         IntSize size,
         IntSize parent_size = IntSize { 0, 0 },
-        IntPosition offset_in_parent = IntPosition { 0, 0 });
+        IntPosition offset_in_parent = IntPosition { 0, 0 }
+    );
 
     ~Texture();
 

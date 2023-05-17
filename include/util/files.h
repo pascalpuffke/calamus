@@ -23,7 +23,8 @@ public:
     [[nodiscard]] static auto write_string(
         const path&,
         std::string_view string,
-        WriteOption write_option = WriteOption::Overwrite) -> Result<void>;
+        WriteOption write_option = WriteOption::Overwrite
+    ) -> Result<void>;
 
     auto operator=(const Files&) = delete;
     auto operator=(Files&&) = delete;

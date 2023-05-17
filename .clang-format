@@ -9,3 +9,4 @@ Language: Cpp
 BreakBeforeBraces: Custom
 BraceWrapping:
   AfterFunction: false
+AlignAfterOpenBracket: BlockIndent

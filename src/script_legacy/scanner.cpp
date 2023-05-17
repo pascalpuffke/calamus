@@ -231,16 +231,20 @@ Token scan_token() {
         return make_token(TokenType::Star);
     case '!':
         return make_token(
-            match('=') ? TokenType::BangEqual : TokenType::Bang);
+            match('=') ? TokenType::BangEqual : TokenType::Bang
+        );
     case '=':
         return make_token(
-            match('=') ? TokenType::EqualEqual : TokenType::Equal);
+            match('=') ? TokenType::EqualEqual : TokenType::Equal
+        );
     case '<':
         return make_token(
-            match('=') ? TokenType::LessEqual : TokenType::Less);
+            match('=') ? TokenType::LessEqual : TokenType::Less
+        );
     case '>':
         return make_token(
-            match('=') ? TokenType::GreaterEqual : TokenType::Greater);
+            match('=') ? TokenType::GreaterEqual : TokenType::Greater
+        );
     case '"':
         return string();
     default:
