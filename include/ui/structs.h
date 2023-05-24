@@ -285,7 +285,7 @@ struct fmt::formatter<calamus::Rectangle<T>> {
     DEFAULT_FORMAT_PARSE()
     template <typename FormatContext>
     auto format(const calamus::Rectangle<T>& value, FormatContext& context) {
-        return format_to(context.out(), "({}, {}, {}, {})", value.x, value.y, value.width, value.height);
+        return fmt::format_to(context.out(), "({}, {}, {}, {})", value.x, value.y, value.width, value.height);
     }
 };
 
