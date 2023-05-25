@@ -26,12 +26,6 @@ void GridLayout::apply(const std::vector<object_ptr>& objects) {
     }
 }
 
-const IntRect& GridLayout::get(object_ptr object) {
-    const auto rect = m_layout.find(object);
-    ASSERT(rect != m_layout.end());
-    return rect->second;
-}
-
 void GridLayout::set_row_count(i32 rows) {
     m_rows = rows;
 }

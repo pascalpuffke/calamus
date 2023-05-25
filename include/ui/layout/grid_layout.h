@@ -8,8 +8,6 @@ class GridLayout final : public Layout {
 public:
     void apply(const std::vector<object_ptr>& objects) override;
 
-    [[nodiscard]] const IntRect& get(object_ptr object) override;
-
     void set_row_count(i32);
     void set_row_spacing(i32);
     void set_rows_homogeneous(bool);
