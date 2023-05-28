@@ -6,7 +6,8 @@ namespace calamus::UI {
 
 class FixedLayout final : public Layout {
 public:
-    void apply(const std::vector<object_ptr>& objects) override;
+    // no-op
+    void apply(const std::vector<object_ptr>&) override {}
 };
 
 }

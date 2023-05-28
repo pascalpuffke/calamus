@@ -24,7 +24,6 @@ public:
     }
 
 protected:
-    std::unordered_map<object_ptr, IntRect> m_layout {};
     IntRect m_parent_rect {};
 };
 

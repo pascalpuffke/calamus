@@ -21,7 +21,6 @@ void GridLayout::apply(const std::vector<object_ptr>& objects) {
         auto rect = IntRect { x, y, width - column_spacing(), height - row_spacing() };
         object->set_rect(rect);
 
-        m_layout[object] = rect;
         ++count;
     }
 }

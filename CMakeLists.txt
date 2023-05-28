@@ -24,7 +24,6 @@ set(MAIN_SOURCES
         src/main.cpp
         src/resources/fonts.cpp
         src/resources/textures.cpp
-        src/ui/layout/fixed_layout.cpp
         src/ui/layout/grid_layout.cpp
         src/ui/ui_button.cpp
         src/ui/ui_label.cpp
@@ -43,7 +42,7 @@ set(SCRIPT_SOURCES
         src/script_legacy/value.cpp
         src/script_legacy/vm.cpp)
 
-# SCRIPT_SOURCES is required by test/CMakeLists.txt, without turning these into absolute paths it won't find any files.
+# Sources may be required by test/CMakeLists.txt, without turning these into absolute paths it won't find any files.
 list(TRANSFORM SCRIPT_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
