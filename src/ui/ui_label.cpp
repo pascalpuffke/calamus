@@ -35,7 +35,7 @@ i32 Label::font_size() const noexcept { return m_font_size; }
 
 void Label::set_font_type(Resources::FontType type) { m_font_type = type; }
 
-Resources::FontType Label::font_type() { return m_font_type; }
+Resources::FontType Label::font_type() const noexcept { return m_font_type; }
 
 void Label::set_color(Color color) { m_color = color; }
 

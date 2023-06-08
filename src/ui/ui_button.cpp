@@ -43,8 +43,8 @@ void Button::set_size(IntSize size) {
 
 void Button::on_hover_begin(IntPosition) {
     m_hovered = true;
-    if (m_label_hover_color.has_value())
-        m_label->set_color(m_label_hover_color.value());
+    if (m_label_hover_color)
+        m_label->set_color(*m_label_hover_color);
 }
 
 void Button::on_hover_end() {
@@ -89,4 +89,5 @@ void Button::set_background_color(Color color) { m_background_color = color; }
 Color Button::hover_color() const noexcept { return m_hover_color; }
 
 void Button::set_hover_color(Color color) { m_hover_color = color; }
+
 }

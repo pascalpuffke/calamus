@@ -20,7 +20,7 @@ constexpr IntPosition calculate_offset_for_alignment(Alignment alignment, IntSiz
     auto offset = IntPosition { 0, 0 };
     switch (alignment) {
     case Alignment::Center: {
-        offset.x = (outer.width  - inner.width) / 2;
+        offset.x = (outer.width - inner.width) / 2;
         offset.y = (outer.height - inner.height) / 2;
     } break;
     case Alignment::CenterLeft: {

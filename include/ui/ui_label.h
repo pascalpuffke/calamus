@@ -24,16 +24,16 @@ public:
 
     [[nodiscard]] ObjectType type() const override;
 
-    void set_text(const std::string& text);
+    void set_text(const std::string&);
     [[nodiscard]] std::string_view text() const noexcept;
 
-    void set_font_size(i32 font_size);
+    void set_font_size(i32);
     [[nodiscard]] i32 font_size() const noexcept;
 
-    void set_font_type(Resources::FontType type);
-    [[nodiscard]] Resources::FontType font_type();
+    void set_font_type(Resources::FontType);
+    [[nodiscard]] Resources::FontType font_type() const noexcept;
 
-    void set_color(Color color);
+    void set_color(Color);
     [[nodiscard]] Color color() const noexcept;
 
     void draw() override;

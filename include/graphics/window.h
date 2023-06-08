@@ -89,18 +89,4 @@ private:
 }
 
 // this sucks. this could surely be automated.
-FORMATTER(calamus::WindowProperties,
-    "WindowProperties(should_close={},\n\tready={},\n\tfullscreen={},\n\thidden={},\n\tmaximized={},\n\tminimized={},\n\tfocused={},\n\tcursor_visible={},\n\tcursor_enabled={},\n\tmin_size={},\n\tsize={},\n\tposition={},\n\tmonitor={})",
-    value.should_close,
-    value.ready,
-    value.fullscreen,
-    value.hidden,
-    value.maximized,
-    value.minimized,
-    value.focused,
-    value.cursor_visible,
-    value.cursor_enabled,
-    value.min_size,
-    value.size,
-    value.position,
-    value.monitor)
+FORMATTER(calamus::WindowProperties, "WindowProperties(should_close={},\n\tready={},\n\tfullscreen={},\n\thidden={},\n\tmaximized={},\n\tminimized={},\n\tfocused={},\n\tcursor_visible={},\n\tcursor_enabled={},\n\tmin_size={},\n\tsize={},\n\tposition={},\n\tmonitor={})", value.should_close, value.ready, value.fullscreen, value.hidden, value.maximized, value.minimized, value.focused, value.cursor_visible, value.cursor_enabled, value.min_size, value.size, value.position, value.monitor)

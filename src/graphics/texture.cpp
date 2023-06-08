@@ -13,7 +13,7 @@ Texture::Texture(u32 gl_id, IntSize size, IntSize parent_size, IntPosition offse
 Texture::~Texture() {
     // We want to delete every texture only once.
     // Textures that are just tiled offsets into an already existing texture ID should be skipped.
-    if (offset() != IntPosition { 0, 0 })
+    if (offset() != IntPosition { 0 })
         return;
 
     wrapper::rtextures::unload_texture(*this);

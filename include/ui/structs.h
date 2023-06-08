@@ -276,7 +276,7 @@ struct fmt::formatter<calamus::BasicColor<T>> {
     DEFAULT_FORMAT_PARSE()
     template <typename FormatContext>
     auto format(const calamus::BasicColor<T>& value, FormatContext& context) {
-        return format_to(context.out(), "({}, {}, {}, {})", value.r, value.g, value.b, value.a);
+        return fmt::format_to(context.out(), "({}, {}, {}, {})", value.r, value.g, value.b, value.a);
     }
 };
 

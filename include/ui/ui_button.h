@@ -24,7 +24,7 @@ public:
 
     void on_hover_begin(IntPosition) override;
     void on_hover_end() override;
-    void on_click(MouseButton mouse_button, IntPosition position) override;
+    void on_click(MouseButton, IntPosition) override;
     void draw() override;
 
     [[nodiscard]] const std::shared_ptr<Label>& label() const;

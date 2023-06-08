@@ -74,7 +74,6 @@ void register_screens() {
             UI::Button::create(UI::Label::create("5", font_size), {}, {}, [&](auto) { LOG_DEBUG("5") }),
             UI::Button::create(UI::Label::create("6", font_size), {}, {}, [&](auto) { LOG_DEBUG("6") }),
         }));
-    // clang-format on
 
     manager->register_screen(Screen::Menu,
         UI::ScreenLayout::create<UI::FixedLayout>({
@@ -120,6 +119,7 @@ void register_screens() {
                     std::exit(0);
                 }),
         }));
+    // clang-format on
 }
 
 Result<void> load_resources() {

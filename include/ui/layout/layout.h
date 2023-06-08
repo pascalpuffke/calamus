@@ -2,7 +2,6 @@
 
 #include <ui/structs.h>
 #include <ui/ui_object.h>
-#include <unordered_map>
 #include <vector>
 
 namespace calamus::UI {

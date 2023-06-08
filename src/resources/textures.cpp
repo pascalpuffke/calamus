@@ -64,7 +64,8 @@ Result<void> TextureManager::load_tilemap(TextureManager::TilemapDescription&& t
                 rl_texture.id,
                 tile_size,
                 tilemap_size,
-                offset_in_texture);
+                offset_in_texture
+            );
             auto [_, success] = m_textures.insert({ name, std::move(texture) });
             if (!success)
                 return Error::formatted("Couldn't insert texture '{}'", name);
