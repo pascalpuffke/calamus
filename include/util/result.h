@@ -90,6 +90,9 @@ public:
     [[nodiscard]] constexpr bool has_error() const {
         return m_error.has_value();
     }
+    [[nodiscard]] constexpr explicit operator bool() const {
+        return has_value();
+    }
 
     [[nodiscard]] constexpr ValueType& value() & {
         ASSERT_MSG(has_value(), "Result has no value");
@@ -179,8 +182,15 @@ public:
 
     constexpr void release_value() { }
 
-    [[nodiscard]] constexpr bool has_value() const { return false; }
-    [[nodiscard]] constexpr bool has_error() const { return m_error.has_value(); }
+    [[nodiscard]] constexpr bool has_value() const {
+        return false;
+    }
+    [[nodiscard]] constexpr bool has_error() const {
+        return m_error.has_value();
+    }
+    [[nodiscard]] constexpr explicit operator bool() const {
+        return !has_error();
+    }
 
     [[nodiscard]] constexpr const ErrorType& error() const& {
         ASSERT_MSG(has_error(), "Result has no error");
@@ -202,7 +212,7 @@ struct fmt::formatter<calamus::Result<void, ErrorT>> {
 
     template <typename FormatContext>
     auto format(const calamus::Result<void, ErrorT>& result, FormatContext& context) -> decltype(context.out()) {
-        if (result.has_error())
+        if (!result)
             return fmt::format_to(context.out(), "{}", result.error());
         return fmt::format_to(context.out(), "<void result>");
     }
@@ -215,7 +225,7 @@ struct fmt::formatter<calamus::Result<ValueT, ErrorT>> {
 
     template <typename FormatContext>
     auto format(const calamus::Result<ValueT, ErrorT>& result, FormatContext& context) -> decltype(context.out()) {
-        if (result.has_value())
+        if (result)
             return fmt::format_to(context.out(), "{}", result.value());
         return fmt::format_to(context.out(), "{}", result.error());
     }

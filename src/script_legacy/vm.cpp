@@ -107,7 +107,7 @@ static bool call_value(Value callee, i32 arg_count) {
 
             // Run class constructor if one exists
             if (auto initializer = klass->methods.get(vm.init_string))
-                return call(AS_CLOSURE(initializer.value()), arg_count);
+                return call(AS_CLOSURE(*initializer), arg_count);
 
             if (arg_count != 0) {
                 runtime_error("Expected 0 arguments but got %d.", arg_count);
@@ -134,11 +134,11 @@ static bool call_value(Value callee, i32 arg_count) {
 
 static bool invoke_from_class(ObjClass* klass, ObjString* name, i32 arg_count) {
     auto method = klass->methods.get(name);
-    if (!method.has_value()) [[unlikely]] {
+    if (!method) [[unlikely]] {
         runtime_error("Undefined property '%s'.", name->chars);
         return false;
     }
-    return call(AS_CLOSURE(method.value()), arg_count);
+    return call(AS_CLOSURE(*method), arg_count);
 }
 
 static bool invoke(ObjString* name, i32 arg_count) {
@@ -150,7 +150,7 @@ static bool invoke(ObjString* name, i32 arg_count) {
 
     auto* instance = AS_INSTANCE(receiver);
     if (auto maybe_value = instance->fields.get(name)) {
-        auto& value = maybe_value.value();
+        auto& value = *maybe_value;
         vm.stack_top[-arg_count - 1] = value;
         return call_value(value, arg_count);
     }
@@ -160,12 +160,12 @@ static bool invoke(ObjString* name, i32 arg_count) {
 
 static bool bind_method(ObjClass* klass, ObjString* name) {
     auto method = klass->methods.get(name);
-    if (!method.has_value()) [[unlikely]] {
+    if (!method) [[unlikely]] {
         runtime_error("Undefined property '%s'.", name->chars);
         return false;
     }
 
-    auto* bound = new_bound_method(peek(0), AS_CLOSURE(method.value()));
+    auto* bound = new_bound_method(peek(0), AS_CLOSURE(*method));
     pop();
     push(OBJ_VAL(bound));
     return true;
@@ -284,11 +284,11 @@ static InterpretResult run() {
         case OpCode::GetGlobal: {
             auto* name = READ_STRING();
             auto global = vm.globals.get(name);
-            if (!global.has_value()) [[unlikely]] {
+            if (!global) [[unlikely]] {
                 runtime_error("Undefined variable '%s'.", name->chars);
                 return InterpretResult::RuntimeError;
             }
-            push(global.value());
+            push(*global);
             break;
         }
         case OpCode::DefineGlobal: {
@@ -327,7 +327,7 @@ static InterpretResult run() {
 
             if (auto property = instance->fields.get(name)) {
                 pop(); // Instance.
-                push(property.value());
+                push(*property);
                 break;
             }
 

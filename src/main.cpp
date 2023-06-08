@@ -127,7 +127,7 @@ Result<void> load_resources() {
     auto* font_manager = VERIFY_PTR(state.font_manager);
 
     const auto load_tilemap = [=](TextureResource& resource) -> Result<void> {
-        if (!resource.tile_names.has_value())
+        if (!resource.tile_names)
             return Error { "Can't load tilemap with empty tile_names vector" };
 
         auto description = Resources::TextureManager::TilemapDescription {
@@ -205,7 +205,7 @@ int main() {
         LOG_INFO("Found gamepad {}: '{}', {} axis", i, name, axis);
     }
 
-    if (auto resources_result = load_resources(); resources_result.has_error()) {
+    if (auto resources_result = load_resources(); !resources_result) {
         LOG_ERROR("Error loading resources: {}", resources_result.error())
         LOG_ERROR("Proceeding anyway, horrible things might happen.")
     }
