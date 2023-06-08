@@ -52,11 +52,6 @@ Color rl_color_from(calamus::Color color) {
 
 namespace calamus::wrapper {
 
-void draw_rect_with_outline(const IntRect& rect, Color background, Color outline, f32 thickness) {
-    rshapes::draw_rectangle(rect, background);
-    rshapes::draw_rectangle_outline(rect, thickness, outline);
-}
-
 namespace rcore {
     void init_window(IntSize size, std::string_view title) {
         InitWindow(size.width, size.height, title.data());

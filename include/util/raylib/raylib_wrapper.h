@@ -16,8 +16,6 @@
 
 namespace calamus::wrapper {
 
-void draw_rect_with_outline(const IntRect&, Color background, Color outline, f32 thickness = 1.0f);
-
 namespace rcore {
     // Window
     void init_window(IntSize, std::string_view title);

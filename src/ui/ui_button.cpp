@@ -58,8 +58,10 @@ void Button::on_click(MouseButton mouse_button, IntPosition position) {
 }
 
 void Button::draw() {
-    if (m_has_frame)
-        wrapper::draw_rect_with_outline(rect(), m_hovered ? hover_color() : background_color(), outline_color());
+    if (m_has_frame) {
+        wrapper::rshapes::draw_rectangle(rect(), m_hovered ? hover_color() : background_color());
+        wrapper::rshapes::draw_rectangle_outline(rect(), 1.0f, outline_color());
+    }
     m_label->draw();
 }
 
