@@ -1,7 +1,7 @@
 #pragma once
 
-#include <graphics/texture.h>
 #include <graphics/camera.h>
+#include <graphics/texture.h>
 #include <graphics/window.h>
 
 namespace calamus {
@@ -12,6 +12,8 @@ namespace UI {
 
 class Renderer final {
 public:
+    friend class RenderingScope;
+
     Renderer();
     ~Renderer() = default;
 
@@ -23,6 +25,11 @@ public:
     void attach(Window*);
     void start();
 
+    using render_callback = std::function<void(u64)>;
+    void install_prerender_callback(const render_callback&);
+
+    [[nodiscard]] auto frame_count() const noexcept { return m_frame_count; }
+
 private:
     void render();
 
@@ -32,8 +39,11 @@ private:
     void draw_fps(IntPosition, i32, Color);
 
     Window* m_window { nullptr };
+    Texture m_render_texture {};
     Camera m_camera {};
-    u64 m_frame { 0 };
+    u64 m_frame_count { 0 };
+
+    std::vector<render_callback> m_prerender_callbacks {};
 };
 
 }
