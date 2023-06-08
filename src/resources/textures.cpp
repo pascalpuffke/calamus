@@ -4,23 +4,25 @@
 
 namespace calamus::Resources {
 
-Result<void> TextureManager::load_texture(TextureManager::TextureDescription&& texture_description) {
-    const auto& path = texture_description.path;
-    const auto& size = texture_description.size;
-    const auto& name = texture_description.name;
+Result<void> TextureManager::load_texture(
+    std::filesystem::path&& path,
+    std::string&& name,
+    IntSize size
+) {
     const auto rl_texture = LoadTexture(path.c_str());
-
     const auto actual_size = Size { rl_texture.width, rl_texture.height };
     if (actual_size != size) {
         UnloadTexture(rl_texture);
         return Error::formatted(
             "Specified size for texture '{}' does not match actual size (specified: {}, actual: {})",
-            texture_description.name, size, actual_size);
+            name, size, actual_size
+        );
     }
 
     auto texture = std::make_unique<calamus::Texture>(
         rl_texture.id,
-        size);
+        size
+    );
 
     auto [_, success] = m_textures.insert({ name, std::move(texture) });
     if (!success)
@@ -31,19 +33,19 @@ Result<void> TextureManager::load_texture(TextureManager::TextureDescription&& t
     return Result<void>::success();
 }
 
-Result<void> TextureManager::load_tilemap(TextureManager::TilemapDescription&& tilemap_description) {
-    const auto& path = tilemap_description.path;
-
+Result<void> TextureManager::load_tilemap(
+    std::filesystem::path&& path,
+    std::string&& tilemap_name,
+    IntSize tilemap_size,
+    IntSize tile_size,
+    std::vector<std::string>&& tile_names
+) {
     if (path.extension() != ".png")
         return Error { "Expected .png extension" };
-
-    const auto tilemap_size = tilemap_description.tilemap_size;
-    const auto tile_size = tilemap_description.tile_size;
 
     if ((tilemap_size.width % tile_size.width != 0) || (tilemap_size.height % tile_size.height != 0))
         return Error { "Tilemap size not divisible by size of a single tile" };
 
-    const auto& tile_names = tilemap_description.tile_names;
     const auto rl_texture = LoadTexture(path.c_str());
 
     const auto tiles = tilemap_size / tile_size;

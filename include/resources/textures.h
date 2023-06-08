@@ -19,24 +19,21 @@ public:
     TextureManager(TextureManager&&) noexcept = delete;
     TextureManager& operator=(TextureManager&&) noexcept = delete;
 
-    struct TextureDescription {
-        std::filesystem::path path;
-        std::string name;
-        IntSize size;
-    };
-    [[nodiscard]] Result<void> load_texture(TextureDescription&&);
+    [[nodiscard]] auto load_texture(
+        std::filesystem::path&& path,
+        std::string&& name,
+        IntSize size
+    ) -> Result<void>;
 
-    struct TilemapDescription {
-        std::filesystem::path path;
-        std::string tilemap_name;
-        IntSize tilemap_size;
+    [[nodiscard]] auto load_tilemap(
+        std::filesystem::path&& path,
+        std::string&& tilemap_name,
+        IntSize tilemap_size,
+        IntSize tile_size,
+        std::vector<std::string>&& tile_names
+    ) -> Result<void>;
 
-        IntSize tile_size;
-        std::vector<std::string> tile_names;
-    };
-    [[nodiscard]] Result<void> load_tilemap(TilemapDescription&&);
-
-    [[nodiscard]] const Texture& texture(const std::string&);
+    [[nodiscard]] auto texture(const std::string&) -> const Texture&;
 
 private:
     std::unordered_map<std::string, std::unique_ptr<Texture>> m_textures {};

@@ -130,25 +130,23 @@ Result<void> load_resources() {
         if (!resource.tile_names)
             return Error { "Can't load tilemap with empty tile_names vector" };
 
-        auto description = Resources::TextureManager::TilemapDescription {
+        TRY(texture_manager->load_tilemap(
             std::move(resource.path),
             std::move(resource.name),
             resource.size,
             resource.tile_size,
-            std::move(resource.tile_names.value())
-        };
-        TRY(texture_manager->load_tilemap(std::move(description)));
+            std::move(*resource.tile_names)
+        ));
 
         return Result<void>::success();
     };
 
     const auto load_texture = [=](TextureResource& resource) -> Result<void> {
-        auto description = Resources::TextureManager::TextureDescription {
+        TRY(texture_manager->load_texture(
             std::move(resource.path),
             std::move(resource.name),
-            resource.size,
-        };
-        TRY(texture_manager->load_texture(std::move(description)));
+            resource.size
+        ));
 
         return Result<void>::success();
     };
