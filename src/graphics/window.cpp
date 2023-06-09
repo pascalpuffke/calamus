@@ -43,23 +43,7 @@ void Window::refresh() {
     m_properties.cursor_visible = !rcore::is_cursor_hidden();
     // cursor_enabled, opacity and min_size are not tracked by raylib
 
-    const auto current_size = m_properties.size;
-    const auto new_size = rcore::get_screen_size();
-    if (new_size != current_size) {
-        for (const auto& callback : m_resize_callbacks) {
-            callback(new_size);
-        }
-        m_properties.size = new_size;
-    }
-
-    const auto current_position = m_properties.position;
-    const auto new_position = rcore::get_window_position();
-    if (new_position != current_position) {
-        for (const auto& callback : m_move_callbacks) {
-            callback(new_position);
-        }
-        m_properties.position = new_position;
-    }
+    notify_callbacks_if_needed(rcore::get_screen_size(), rcore::get_window_position());
 }
 
 void Window::close() { rcore::close_window(); }
@@ -109,6 +93,7 @@ void Window::set_minimum_size(IntSize size) {
 }
 
 void Window::set_size(IntSize size) {
+    notify_callbacks_if_needed(size, position());
     m_properties.size = size;
     rcore::set_window_size(size);
 }
@@ -122,6 +107,7 @@ void Window::set_resizable(bool resizable) {
 }
 
 void Window::set_position(IntPosition position) {
+    notify_callbacks_if_needed(size(), position);
     m_properties.position = position;
     rcore::set_window_position(position);
 }
@@ -137,6 +123,24 @@ void Window::install_resize_callback(const resize_callback& callback) {
 
 void Window::install_move_callback(const move_callback& callback) {
     m_move_callbacks.emplace_back(callback);
+}
+
+void Window::notify_callbacks_if_needed(IntSize new_size, IntPosition new_position) {
+    const auto current_size = m_properties.size;
+    if (new_size != current_size) {
+        for (const auto& callback : m_resize_callbacks) {
+            callback(new_size);
+        }
+        m_properties.size = new_size;
+    }
+
+    const auto current_position = m_properties.position;
+    if (new_position != current_position) {
+        for (const auto& callback : m_move_callbacks) {
+            callback(new_position);
+        }
+        m_properties.position = new_position;
+    }
 }
 
 }

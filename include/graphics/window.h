@@ -79,6 +79,8 @@ public:
     [[nodiscard]] const auto& properties() const noexcept { return m_properties; }
 
 private:
+    void notify_callbacks_if_needed(IntSize, IntPosition);
+
     WindowProperties m_properties {};
     std::string_view m_title { "Window" };
 
