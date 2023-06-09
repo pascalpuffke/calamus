@@ -14,12 +14,11 @@ using namespace wrapper;
 class RenderingScope {
 public:
     USED explicit RenderingScope(Renderer* renderer, std::function<void()> render, std::function<void()> ui)
-        : render_function(std::move(render))
-        , ui_function(std::move(ui)) {
+        : ui_function(std::move(ui)) {
         rcore::begin_drawing();
         rcore::clear_background(default_palette::black);
         rcore::begin_mode_2d(renderer->m_camera);
-        render_function();
+        render();
     }
 
     ~RenderingScope() {
@@ -29,7 +28,6 @@ public:
     }
 
 private:
-    std::function<void()> render_function;
     std::function<void()> ui_function;
 };
 
@@ -69,15 +67,6 @@ void Renderer::start() {
                 if (rcore::is_key_down(Key::C)) {
                     m_camera.set_offset(m_camera.offset() + IntPosition { 10 });
                     println(m_camera.offset());
-                }
-
-                const auto mouse_position = rcore::get_mouse_position();
-                state.screen_manager->check_hover(mouse_position);
-
-                for (auto button_index = 0; button_index < std::to_underlying(MouseButton::__Count); button_index++) {
-                    const auto button = static_cast<MouseButton>(button_index);
-                    if (rcore::is_mouse_button_pressed(button))
-                        state.screen_manager->check_click(button, mouse_position);
                 }
 
                 render();

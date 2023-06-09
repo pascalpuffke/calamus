@@ -49,7 +49,7 @@ private:
 
 class ScreenManager final {
 public:
-    ScreenManager() = default;
+    ScreenManager();
     ~ScreenManager() = default;
 
     ScreenManager(const ScreenManager&) = delete;

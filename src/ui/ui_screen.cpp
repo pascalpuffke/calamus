@@ -1,7 +1,11 @@
+#include <graphics/renderer.h>
 #include <resources/state.h>
 #include <ui/ui_screen.h>
+#include <util/raylib/raylib_wrapper.h>
 
 namespace calamus::UI {
+
+using namespace wrapper;
 
 template <Arithmetic T = i32>
 [[nodiscard]] static constexpr bool in_bounds(Position<T> position, Rectangle<T> rect) noexcept {
@@ -57,6 +61,19 @@ ScreenLayout& ScreenManager::layout(Screen screen) {
 
     // Is this dumb?
     return result->second;
+}
+
+ScreenManager::ScreenManager() {
+    VERIFY_PTR(state.renderer)->install_prerender_callback([this](auto) {
+        const auto mouse_position = rcore::get_mouse_position();
+        check_hover(mouse_position);
+
+        for (auto button_index = 0; button_index < std::to_underlying(MouseButton::__Count); button_index++) {
+            const auto button = static_cast<MouseButton>(button_index);
+            if (rcore::is_mouse_button_pressed(button))
+                check_click(button, mouse_position);
+        }
+    });
 }
 
 void ScreenLayout::rebuild_layout(IntSize new_size) {

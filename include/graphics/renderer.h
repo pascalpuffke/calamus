@@ -39,7 +39,6 @@ private:
     void draw_fps(IntPosition, i32, Color);
 
     Window* m_window { nullptr };
-    Texture m_render_texture {};
     Camera m_camera {};
     u64 m_frame_count { 0 };
 

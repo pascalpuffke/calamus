@@ -173,18 +173,20 @@ Result<void> load_resources() {
 int main() {
     using namespace calamus;
 
+    // The exact order is immensely important.
+    // Some components, such as ScreenManager, depend on a renderer being instantiated *before*, for example to register callbacks.
     auto config = std::make_unique<TomlConfig>(TomlConfigLoader::load_or_default(toml_path));
     state.config = config.get();
     auto textures = std::make_unique<Resources::TextureManager>();
     state.texture_manager = textures.get();
     auto fonts = std::make_unique<Resources::FontManager>();
     state.font_manager = fonts.get();
-    auto screens = std::make_unique<UI::ScreenManager>();
-    state.screen_manager = screens.get();
     auto window = std::make_unique<Window>();
     state.window = window.get();
     auto renderer = std::make_unique<Renderer>();
     state.renderer = renderer.get();
+    auto screens = std::make_unique<UI::ScreenManager>();
+    state.screen_manager = screens.get();
 
     // Has to be the first raylib call, otherwise it will not use a custom log callback
     SetTraceLogCallback(raylib_log_callback);
