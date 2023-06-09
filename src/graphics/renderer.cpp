@@ -13,15 +13,17 @@ using namespace wrapper;
 
 class RenderingScope {
 public:
-    USED explicit RenderingScope(std::function<void()> render, std::function<void()> ui)
+    USED explicit RenderingScope(Renderer* renderer, std::function<void()> render, std::function<void()> ui)
         : render_function(std::move(render))
         , ui_function(std::move(ui)) {
         rcore::begin_drawing();
         rcore::clear_background(default_palette::black);
+        rcore::begin_mode_2d(renderer->m_camera);
         render_function();
     }
 
     ~RenderingScope() {
+        rcore::end_mode_2d();
         ui_function();
         rcore::end_drawing();
     }
@@ -51,7 +53,7 @@ void Renderer::start() {
     VERIFY_PTR(m_window);
 
     while (!m_window->should_close()) {
-        RenderingScope scope {
+        RenderingScope scope { this,
             [this]() {
                 // TODO this should absolutely NOT be inside the renderer.
                 if (rcore::is_key_pressed(Key::W))
