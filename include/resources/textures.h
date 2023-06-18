@@ -1,7 +1,7 @@
 #pragma once
 
 #include <filesystem>
-#include <resources/tilemap.h>
+#include <graphics/texture.h>
 #include <string>
 #include <ui/structs.h>
 #include <unordered_map>
