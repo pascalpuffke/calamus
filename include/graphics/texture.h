@@ -23,6 +23,11 @@ public:
 
     ~Texture();
 
+    Texture(const Texture&) = delete;
+    Texture& operator=(const Texture&) = delete;
+    Texture(Texture&&) noexcept = default;
+    Texture& operator=(Texture&&) noexcept = default;
+
     [[nodiscard]] constexpr auto id() const noexcept { return m_gl_id; }
     [[nodiscard]] constexpr auto size() const noexcept { return m_size; }
     [[nodiscard]] constexpr auto width() const noexcept { return m_size.width; }
