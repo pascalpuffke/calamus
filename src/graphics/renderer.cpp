@@ -5,31 +5,10 @@
 #include <ui/ui_screen.h>
 #include <util/logging.h>
 #include <util/raylib/raylib_wrapper.h>
-#include <utility>
 
 namespace calamus {
 
 using namespace wrapper;
-
-class RenderingScope {
-public:
-    USED explicit RenderingScope(Renderer* renderer, std::function<void()> render, std::function<void()> ui)
-        : ui_function(std::move(ui)) {
-        rcore::begin_drawing();
-        rcore::clear_background(default_palette::black);
-        rcore::begin_mode_2d(renderer->m_camera);
-        render();
-    }
-
-    ~RenderingScope() {
-        rcore::end_mode_2d();
-        ui_function();
-        rcore::end_drawing();
-    }
-
-private:
-    std::function<void()> ui_function;
-};
 
 Renderer::Renderer() = default;
 
@@ -47,37 +26,47 @@ void Renderer::attach(Window* window) {
     });
 }
 
+void Renderer::prepare_render() {
+    rcore::begin_drawing();
+    rcore::clear_background(default_palette::black);
+    rcore::begin_mode_2d(m_camera);
+
+    // TODO: Add input management and move these out of Renderer.
+    if (rcore::is_key_pressed(Key::W))
+        state.current_screen = Screen::Game;
+    if (rcore::is_key_pressed(Key::E))
+        state.current_screen = Screen::Menu;
+}
+
+void Renderer::notify_prerender_callbacks() {
+    for (const auto& callback : m_prerender_callbacks) {
+        callback(frame_count());
+    }
+}
+
 void Renderer::start() {
     VERIFY_PTR(m_window);
 
     while (!m_window->should_close()) {
-        RenderingScope scope { this,
-            [this]() {
-                // TODO this should absolutely NOT be inside the renderer.
-                if (rcore::is_key_pressed(Key::W))
-                    state.current_screen = Screen::Game;
-                if (rcore::is_key_pressed(Key::E))
-                    state.current_screen = Screen::Menu;
-                if (rcore::is_key_pressed(Key::L)) {
-                    rcore::open_url("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-                    LOG_DEBUG("{}", m_window->properties());
-                }
-                if (rcore::is_key_down(Key::R))
-                    m_window->set_position(m_window->position() + IntPosition { 10 });
-                if (rcore::is_key_down(Key::C)) {
-                    m_camera.set_offset(m_camera.offset() + IntPosition { 10 });
-                    println(m_camera.offset());
-                }
+        notify_prerender_callbacks();
 
-                render();
-            },
-            [this]() {
-                draw_ui();
-                m_window->refresh();
-                ++m_frame_count;
-            }
-        };
+        prepare_render();
+        render();
+
+        // To prevent the camera from affecting UI elements, we need to end 2d mode here.
+        // It would be more elegant to move this call to 'finalize()'
+        rcore::end_mode_2d();
+        draw_ui();
+
+        finalize();
     }
+}
+
+void Renderer::finalize() {
+    rcore::end_drawing();
+
+    m_window->refresh();
+    ++m_frame_count;
 }
 
 void Renderer::render() {
@@ -103,7 +92,7 @@ void Renderer::draw_texture(const Texture& texture, IntPosition position) {
 }
 
 void Renderer::draw_ui() {
-    const auto& layout = state.screen_manager->layout(state.current_screen);
+    const auto& layout = VERIFY_PTR(state.screen_manager)->layout(state.current_screen);
     for (const auto& object : layout.children()) {
         object->draw();
         if (state.config->draw_ui_bounds)

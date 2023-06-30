@@ -12,8 +12,6 @@ namespace UI {
 
 class Renderer final {
 public:
-    friend class RenderingScope;
-
     Renderer();
     ~Renderer() = default;
 
@@ -31,7 +29,10 @@ public:
     [[nodiscard]] auto frame_count() const noexcept { return m_frame_count; }
 
 private:
+    void prepare_render();
+    void notify_prerender_callbacks();
     void render();
+    void finalize();
 
     void draw_texture(const calamus::Texture&, IntPosition);
     void draw_ui();
