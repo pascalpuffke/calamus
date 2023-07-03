@@ -43,6 +43,14 @@ public:
 
     [[nodiscard]] auto frame_count() const noexcept { return m_frame_count; }
 
+    [[nodiscard]] auto& camera() noexcept { return m_camera; }
+    [[nodiscard]] const auto& camera() const noexcept { return m_camera; }
+
+    [[nodiscard]] const auto& window() const {
+        VERIFY_PTR(m_window);
+        return *m_window;
+    }
+
 private:
     void prepare_render();
     void notify_prerender_callbacks();
