@@ -16,7 +16,6 @@ public:
     // TODO get rid of these and find a more appropriate way allowing render layers to access
     //      crucial functionality (camera manipulation, draw calls, etc) without exposing these
     //      to other, unrelated parts of the engine.
-    friend class UILayer;
     friend class WorldTestLayer;
 
     Renderer();

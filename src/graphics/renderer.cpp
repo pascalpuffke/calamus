@@ -17,14 +17,26 @@ public:
 
     void on_render() override {
         const auto& layout = VERIFY_PTR(state.screen_manager)->layout(state.current_screen);
-        for (const auto& object : layout.children()) {
+        for (const auto& object : layout.children())
             object->draw();
-            if (state.config->draw_ui_bounds)
-                draw_ui_bounds(object);
-        }
+    }
+};
 
+class DebugLayer final : public RenderLayer {
+public:
+    explicit DebugLayer(Renderer& renderer)
+        : RenderLayer(renderer) { }
+
+    void on_render() override {
         if (state.config->show_fps)
             draw_fps(Position { 10, 10 }, 20, default_palette::green);
+
+        if (!state.config->draw_ui_bounds)
+            return;
+
+        const auto& layout = VERIFY_PTR(state.screen_manager)->layout(state.current_screen);
+        for (const auto& object : layout.children())
+            draw_ui_bounds(object);
     }
 
 private:
@@ -50,11 +62,11 @@ private:
         const auto fps_string = fmt::format("{} fps ({:.02f}ms/f) {}", fps, frametime, renderer.frame_count());
         rtext::draw_text(fps_string, position, font_size, color, Resources::FontType::Monospace);
 
-        const auto pos = renderer.m_window->position();
+        const auto pos = renderer.window().position();
         const auto pos_string = fmt::format("{}", pos);
         rtext::draw_text(pos_string, IntPosition { position.x, position.y + font_size }, font_size, color, Resources::FontType::Monospace);
 
-        const auto size = renderer.m_window->size();
+        const auto size = renderer.window().size();
         const auto size_string = fmt::format("{}", size);
         rtext::draw_text(size_string, IntPosition { position.x, position.y + (font_size * 2) }, font_size, color, Resources::FontType::Monospace);
     }
@@ -82,7 +94,7 @@ public:
             { 'd', "dirt" },
         };
 
-        const auto win_size = renderer.m_window->size();
+        const auto win_size = renderer.window().size();
         for (auto x = 0; x < win_size.width; x += 16) {
             for (auto y = 0; y < win_size.height; y += 16) {
                 const auto index_x = std::min(usize(x / 16), world.size() - 1);
@@ -137,6 +149,8 @@ void Renderer::start() {
 
     install_layer<WorldTestLayer>(LayerSpace::WorldSpace);
     install_layer<UILayer>(LayerSpace::ScreenSpace);
+    if (state.config->debug && (state.config->show_fps || state.config->draw_ui_bounds))
+        install_layer<DebugLayer>(LayerSpace::ScreenSpace);
 
     while (!m_window->should_close()) {
         notify_prerender_callbacks();
