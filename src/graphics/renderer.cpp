@@ -160,8 +160,8 @@ void Renderer::start() {
 
         // To prevent the camera from affecting UI elements, we need to end 2d mode here.
         // It would be more elegant to move this call to 'finalize()'
-        render_screen_space_layers();
         rcore::end_mode_2d();
+        render_screen_space_layers();
 
         finalize();
     }
