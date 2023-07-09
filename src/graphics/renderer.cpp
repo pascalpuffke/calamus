@@ -24,22 +24,26 @@ public:
 
 class DebugLayer final : public RenderLayer {
 public:
-    explicit DebugLayer(Renderer& renderer)
-        : RenderLayer(renderer) { }
+    DebugLayer(Renderer& renderer, bool draw_fps, bool draw_ui_bounds)
+        : RenderLayer(renderer)
+        , m_draw_fps(draw_fps)
+        , m_draw_ui_bounds(draw_ui_bounds) { }
 
     void on_render() override {
-        if (state.config->show_fps)
+        if (m_draw_fps)
             draw_fps(Position { 10, 10 }, 20, default_palette::green);
 
-        if (!state.config->draw_ui_bounds)
-            return;
-
-        const auto& layout = VERIFY_PTR(state.screen_manager)->layout(state.current_screen);
-        for (const auto& object : layout.children())
-            draw_ui_bounds(object);
+        if (m_draw_ui_bounds) {
+            const auto& layout = VERIFY_PTR(state.screen_manager)->layout(state.current_screen);
+            for (const auto& object : layout.children())
+                draw_ui_bounds(object);
+        }
     }
 
 private:
+    bool m_draw_fps { false };
+    bool m_draw_ui_bounds { false };
+
     void draw_ui_bounds(const std::shared_ptr<UI::Object>& object) {
         const auto& position = object->position();
         const auto& size = object->size();
@@ -147,10 +151,12 @@ void Renderer::notify_prerender_callbacks() {
 void Renderer::start() {
     VERIFY_PTR(m_window);
 
+    auto* config = VERIFY_PTR(state.config);
+
     install_layer<WorldTestLayer>(LayerSpace::WorldSpace);
     install_layer<UILayer>(LayerSpace::ScreenSpace);
-    if (state.config->debug && (state.config->show_fps || state.config->draw_ui_bounds))
-        install_layer<DebugLayer>(LayerSpace::ScreenSpace);
+    if (config->debug)
+        install_layer<DebugLayer>(LayerSpace::ScreenSpace, config->show_fps, config->draw_ui_bounds);
 
     while (!m_window->should_close()) {
         notify_prerender_callbacks();
