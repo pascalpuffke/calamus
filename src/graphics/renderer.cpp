@@ -195,10 +195,10 @@ void Renderer::install_prerender_callback(const render_callback& callback) {
     m_prerender_callbacks.emplace_back(callback);
 }
 
-template <typename Layer>
+template <typename Layer, typename... Args>
     requires std::is_base_of_v<RenderLayer, Layer>
-void Renderer::install_layer(LayerSpace space) {
-    auto layer = std::make_unique<Layer>(*this);
+void Renderer::install_layer(LayerSpace space, Args&&... args) {
+    auto layer = std::make_unique<Layer>(*this, std::forward<Args>(args)...);
     if (space == LayerSpace::ScreenSpace)
         m_screen_space_layers.emplace_back(std::move(layer));
     else

@@ -36,9 +36,9 @@ public:
         WorldSpace,
         ScreenSpace,
     };
-    template <typename Layer>
+    template <typename Layer, typename... Args>
         requires std::is_base_of_v<RenderLayer, Layer>
-    void install_layer(LayerSpace);
+    void install_layer(LayerSpace, Args&&...);
 
     [[nodiscard]] auto frame_count() const noexcept { return m_frame_count; }
 
