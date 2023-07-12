@@ -168,6 +168,33 @@ Result<void> load_resources() {
     return Result<void>::success();
 }
 
+void setup_window(Window& window) {
+    window.init();
+    window.set_title("dingus");
+    window.hide_os_cursor();
+}
+
+void setup_renderer(Renderer& renderer, Window* window) {
+    const auto get_unix_second = [&]() {
+        return std::chrono::duration_cast<std::chrono::seconds>(
+            std::chrono::high_resolution_clock::now().time_since_epoch()
+        );
+    };
+    auto previous_frame_count = u64 { 0 };
+    auto previous_time = get_unix_second();
+    renderer.install_prerender_callback([&](auto frame_count) {
+        auto time = get_unix_second();
+        if (previous_time != time) {
+            auto frames_since_last = frame_count - previous_frame_count;
+            LOG_DEBUG("frame {} ({} fps)", frame_count, frames_since_last);
+            previous_frame_count = frame_count;
+        }
+        previous_time = time;
+    });
+
+    renderer.attach(window);
+}
+
 }
 
 int main() {
@@ -191,25 +218,8 @@ int main() {
     // Has to be the first raylib call, otherwise it will not use a custom log callback
     SetTraceLogCallback(raylib_log_callback);
 
-    window->init();
-    window->set_title("dingus");
-    const auto get_unix_second = [&]() {
-        return std::chrono::duration_cast<std::chrono::seconds>(
-            std::chrono::high_resolution_clock::now().time_since_epoch()
-        );
-    };
-    auto previous_frame_count = u64 { 0 };
-    auto previous_time = get_unix_second();
-    renderer->install_prerender_callback([&](auto frame_count) {
-        auto time = get_unix_second();
-        if (previous_time != time) {
-            auto frames_since_last = frame_count - previous_frame_count;
-            LOG_DEBUG("frame {} ({} fps)", frame_count, frames_since_last);
-            previous_frame_count = frame_count;
-        }
-        previous_time = time;
-    });
-    renderer->attach(window.get());
+    setup_window(*window);
+    setup_renderer(*renderer, window.get());
 
     // Raylib supports a maximum of 4 gamepads.
     for (auto i = 0; i < 4; i++) {
