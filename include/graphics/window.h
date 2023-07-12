@@ -40,6 +40,8 @@ public:
     void refresh();
     void close();
 
+    void hide_os_cursor();
+
     void set_title(std::string_view);
 
     void set_fullscreen(bool);

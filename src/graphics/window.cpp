@@ -48,6 +48,8 @@ void Window::refresh() {
 
 void Window::close() { rcore::close_window(); }
 
+void Window::hide_os_cursor() { rcore::hide_cursor(); }
+
 void Window::set_title(std::string_view title) {
     m_title = title;
     rcore::set_window_title(title);
