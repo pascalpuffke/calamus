@@ -112,6 +112,20 @@ public:
     }
 };
 
+class CursorLayer final : public RenderLayer {
+public:
+    explicit CursorLayer(Renderer& renderer)
+        : RenderLayer(renderer) { }
+
+    void on_render() override {
+        const auto absolute_position = rcore::get_mouse_position();
+        auto* textures = VERIFY_PTR(state.texture_manager);
+        const auto& cursor = textures->texture("cursor");
+
+        renderer.draw_texture(cursor, absolute_position);
+    }
+};
+
 Renderer::Renderer() = default;
 
 Renderer::~Renderer() = default;
@@ -130,7 +144,7 @@ void Renderer::attach(Window* window) {
     });
 }
 
-void Renderer::prepare_render() {
+void Renderer::prepare() {
     rcore::begin_drawing();
     rcore::clear_background(default_palette::black);
     rcore::begin_mode_2d(m_camera);
@@ -157,11 +171,12 @@ void Renderer::start() {
     install_layer<UILayer>(LayerSpace::ScreenSpace);
     if (config->debug)
         install_layer<DebugLayer>(LayerSpace::ScreenSpace, config->show_fps, config->draw_ui_bounds);
+    install_layer<CursorLayer>(LayerSpace::ScreenSpace);
 
     while (!m_window->should_close()) {
         notify_prerender_callbacks();
 
-        prepare_render();
+        prepare();
         render_world_space_layers();
 
         // To prevent the camera from affecting UI elements, we need to end 2d mode here.

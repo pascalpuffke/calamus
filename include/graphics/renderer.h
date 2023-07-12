@@ -17,6 +17,7 @@ public:
     //      crucial functionality (camera manipulation, draw calls, etc) without exposing these
     //      to other, unrelated parts of the engine.
     friend class WorldTestLayer;
+    friend class CursorLayer;
 
     Renderer();
     ~Renderer();
@@ -51,7 +52,7 @@ public:
     }
 
 private:
-    void prepare_render();
+    void prepare();
     void notify_prerender_callbacks();
     void render_world_space_layers();
     void render_screen_space_layers();

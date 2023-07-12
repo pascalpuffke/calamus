@@ -1,0 +1,7 @@
+[texture]
+name = "cursor"
+
+width = 16
+height = 16
+
+tiled = false
