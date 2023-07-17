@@ -1,4 +1,5 @@
 #include <graphics/texture.h>
+#include <util/logging.h>
 #include <util/raylib/raylib_wrapper.h>
 
 namespace calamus {

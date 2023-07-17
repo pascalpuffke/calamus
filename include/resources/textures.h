@@ -5,6 +5,7 @@
 #include <string>
 #include <ui/structs.h>
 #include <unordered_map>
+#include <util/result.h>
 #include <vector>
 
 namespace calamus::Resources {

@@ -4,6 +4,7 @@
 #include <ui/ui_label.h>
 #include <ui/ui_screen.h>
 #include <util/logging.h>
+#include <util/print.h>
 #include <util/raylib/raylib_wrapper.h>
 
 namespace calamus {
@@ -16,7 +17,7 @@ public:
         : RenderLayer(renderer) { }
 
     void on_render() override {
-        const auto& layout = VERIFY_PTR(state.screen_manager)->layout(state.current_screen);
+        const auto& layout = VERIFY(state.screen_manager)->current_layout();
         for (const auto& object : layout.children())
             object->draw();
     }
@@ -34,7 +35,7 @@ public:
             draw_fps(Position { 10, 10 }, 20, default_palette::green);
 
         if (m_draw_ui_bounds) {
-            const auto& layout = VERIFY_PTR(state.screen_manager)->layout(state.current_screen);
+            const auto& layout = VERIFY(state.screen_manager)->current_layout();
             for (const auto& object : layout.children())
                 draw_ui_bounds(object);
         }
@@ -105,7 +106,7 @@ public:
                 const auto index_y = std::min(usize(y / 16), world[0].size() - 1);
                 const auto tile_char = world[index_x][index_y];
                 const auto texture_key = texture_map[tile_char];
-                const auto& texture = VERIFY_PTR(state.texture_manager)->texture(texture_key);
+                const auto& texture = VERIFY(state.texture_manager)->texture(texture_key);
                 renderer.draw_texture(texture, IntPosition { x, y });
             }
         }
@@ -119,7 +120,7 @@ public:
 
     void on_render() override {
         const auto absolute_position = rcore::get_mouse_position();
-        auto* textures = VERIFY_PTR(state.texture_manager);
+        auto* textures = VERIFY(state.texture_manager);
         const auto& cursor = textures->texture("cursor");
 
         renderer.draw_texture(cursor, absolute_position);
@@ -131,12 +132,12 @@ Renderer::Renderer() = default;
 Renderer::~Renderer() = default;
 
 void Renderer::attach(Window* window) {
-    m_window = window;
+    m_window = VERIFY(window);
     m_window->refresh();
     m_window->install_resize_callback([](auto new_size) {
         LOG_DEBUG("resized: {}", new_size);
 
-        auto& screen = state.screen_manager->layout(state.current_screen);
+        auto& screen = state.screen_manager->current_layout();
         screen.rebuild_layout(new_size);
     });
     m_window->install_move_callback([](auto new_position) {
@@ -148,12 +149,6 @@ void Renderer::prepare() {
     rcore::begin_drawing();
     rcore::clear_background(default_palette::black);
     rcore::begin_mode_2d(m_camera);
-
-    // TODO: Add input management and move these out of Renderer.
-    if (rcore::is_key_pressed(Key::W))
-        state.current_screen = Screen::Game;
-    if (rcore::is_key_pressed(Key::E))
-        state.current_screen = Screen::Menu;
 }
 
 void Renderer::notify_prerender_callbacks() {
@@ -163,9 +158,9 @@ void Renderer::notify_prerender_callbacks() {
 }
 
 void Renderer::start() {
-    VERIFY_PTR(m_window);
+    VERIFY(m_window);
 
-    auto* config = VERIFY_PTR(state.config);
+    const auto* config = VERIFY(state.config);
 
     install_layer<WorldTestLayer>(LayerSpace::WorldSpace);
     install_layer<UILayer>(LayerSpace::ScreenSpace);

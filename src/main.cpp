@@ -1,4 +1,5 @@
 #include <file/resources.h>
+#include <file/toml-config.h>
 #include <graphics/renderer.h>
 #include <raylib.h>
 #include <resources/fonts.h>
@@ -7,7 +8,7 @@
 #include <ui/layout/grid_layout.h>
 #include <ui/ui_button.h>
 #include <ui/ui_screen.h>
-#include <util/common.h>
+#include <util/logging.h>
 #include <util/raylib/raylib_wrapper.h>
 
 static calamus::State global_state;
@@ -52,8 +53,8 @@ void raylib_log_callback(i32 level, const char* text, va_list args) {
 void register_screens() {
     const auto margin = 30;
     const auto font_size = 28;
-    auto* window = VERIFY_PTR(state.window);
-    auto* manager = VERIFY_PTR(state.screen_manager);
+    auto* window = VERIFY(state.window);
+    auto* manager = VERIFY(state.screen_manager);
 
     manager->register_screen(Screen::Game, UI::ScreenLayout::create<UI::FixedLayout>({}));
     auto editor_layout = std::make_unique<UI::GridLayout>();
@@ -123,8 +124,8 @@ void register_screens() {
 }
 
 Result<void> load_resources() {
-    auto* texture_manager = VERIFY_PTR(state.texture_manager);
-    auto* font_manager = VERIFY_PTR(state.font_manager);
+    auto* texture_manager = VERIFY(state.texture_manager);
+    auto* font_manager = VERIFY(state.font_manager);
 
     const auto load_tilemap = [=](TextureResource& resource) -> Result<void> {
         if (!resource.tile_names)
@@ -175,14 +176,16 @@ void setup_window(Window& window) {
 }
 
 void setup_renderer(Renderer& renderer, Window* window) {
-    const auto get_unix_second = [&]() {
-        return std::chrono::duration_cast<std::chrono::seconds>(
-            std::chrono::high_resolution_clock::now().time_since_epoch()
-        );
-    };
-    auto previous_frame_count = u64 { 0 };
-    auto previous_time = get_unix_second();
-    renderer.install_prerender_callback([&](auto frame_count) {
+    renderer.install_prerender_callback([](auto frame_count) {
+        const auto get_unix_second = []() {
+            return std::chrono::duration_cast<std::chrono::seconds>(
+                std::chrono::high_resolution_clock::now().time_since_epoch()
+            );
+        };
+
+        static auto previous_frame_count = u64 { 0 };
+        static auto previous_time = get_unix_second();
+
         auto time = get_unix_second();
         if (previous_time != time) {
             auto frames_since_last = frame_count - previous_frame_count;

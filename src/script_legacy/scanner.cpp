@@ -1,8 +1,6 @@
 #include <cctype>
 #include <cstring>
 #include <script_legacy/scanner.h>
-#include <util/assert.h>
-#include <util/types.h>
 
 namespace calamus::script {
 
@@ -250,7 +248,6 @@ Token scan_token() {
     default:
         return error_token("Unexpected character.");
     }
-    UNREACHABLE();
 }
 
 }

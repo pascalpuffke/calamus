@@ -1,6 +1,7 @@
+#include <assert.hpp>
 #include <raylib.h>
 #include <resources/textures.h>
-#include <util/assert.h>
+#include <util/logging.h>
 
 namespace calamus::Resources {
 
@@ -81,7 +82,7 @@ Result<void> TextureManager::load_tilemap(
 
 const Texture& TextureManager::texture(const std::string& key) {
     auto result = m_textures.find(key);
-    ASSERT_MSG(result != m_textures.end(), "tilemap not found");
+    VERIFY(result != m_textures.end(), "tilemap not found");
 
     // Lifetime of this texture is tied to this TextureManager instance, which practically means as long as
     // the application is running. Should be fine?

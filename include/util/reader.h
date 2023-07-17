@@ -1,7 +1,6 @@
 #pragma once
 
 #include <fstream>
-#include <util/assert.h>
 #include <util/types.h>
 
 namespace calamus {

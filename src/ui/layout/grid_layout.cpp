@@ -6,9 +6,7 @@ i32 GridLayout::row_spacing_per_direction() const { return row_spacing() / 2; }
 i32 GridLayout::column_spacing_per_direction() const { return column_spacing() / 2; }
 
 void GridLayout::apply(const std::vector<object_ptr>& objects) {
-    if (!rows_homogeneous() || !columns_homogeneous()) {
-        TODO("Implement non-homogeneous grid layout");
-    }
+    VERIFY(rows_homogeneous() && columns_homogeneous(), "TODO: Implement non-homogeneous grid layout");
 
     const auto width = m_parent_rect.width / column_count();
     const auto height = m_parent_rect.height / row_count();

@@ -1,7 +1,7 @@
 #pragma once
 
+#include <assert.hpp>
 #include <optional>
-#include <util/assert.h>
 #include <util/formatter.h>
 #include <util/typename.h>
 
@@ -95,12 +95,12 @@ public:
     }
 
     [[nodiscard]] constexpr ValueType& value() & {
-        ASSERT_MSG(has_value(), "Result has no value");
+        VERIFY(has_value(), "Result has no value");
         return m_value.value();
     }
 
     [[nodiscard]] constexpr const ValueType& value() const& {
-        ASSERT_MSG(has_value(), "Result has no value");
+        VERIFY(has_value(), "Result has no value");
         return m_value.value();
     }
 
@@ -109,7 +109,7 @@ public:
      * After calling this function, has_value() will return false and any further operations are undefined behaviour.
      */
     [[nodiscard]] constexpr ValueType release_value() {
-        ASSERT_MSG(has_value(), "Result has no value");
+        VERIFY(has_value(), "Result has no value");
         auto moved = std::move(m_value.value());
         value().~ValueType();
         m_value.reset();
@@ -133,7 +133,7 @@ public:
     }
 
     [[nodiscard]] constexpr const ErrorType& error() const& {
-        ASSERT_MSG(has_error(), "Result has no error");
+        VERIFY(has_error(), "Result has no error");
         return m_error.value();
     }
     // I don't think it makes much sense to create more error accessors than const&
@@ -193,7 +193,7 @@ public:
     }
 
     [[nodiscard]] constexpr const ErrorType& error() const& {
-        ASSERT_MSG(has_error(), "Result has no error");
+        VERIFY(has_error(), "Result has no error");
         return m_error.value();
     }
 

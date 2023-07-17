@@ -59,8 +59,11 @@ public:
 
     void check_hover(IntPosition);
     void check_click(MouseButton, IntPosition);
+
     void register_screen(Screen, ScreenLayout&&);
+
     [[nodiscard]] ScreenLayout& layout(Screen);
+    [[nodiscard]] ScreenLayout& current_layout();
 
 private:
     ScreenLayout::object_ptr m_last_hovered_object { nullptr };

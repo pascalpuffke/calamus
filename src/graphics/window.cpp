@@ -1,7 +1,8 @@
 #include <algorithm>
+#include <assert.hpp>
 #include <graphics/window.h>
 #include <resources/state.h>
-#include <util/assert.h>
+#include <util/logging.h>
 #include <util/raylib/raylib_wrapper.h>
 
 namespace calamus {
@@ -11,7 +12,7 @@ static constexpr u32 FLAG_RESIZABLE = 0x04;
 using namespace wrapper;
 
 void Window::init() {
-    const auto* config = VERIFY_PTR(state.config);
+    const auto* config = VERIFY(state.config);
     rcore::init_window(IntSize { config->width, config->height }, m_title);
     rcore::set_window_state(FLAG_RESIZABLE);
 

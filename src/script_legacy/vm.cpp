@@ -1,3 +1,4 @@
+#include <assert.hpp>
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>
@@ -7,7 +8,6 @@
 #include <script_legacy/debug.h>
 #include <script_legacy/memory.h>
 #include <script_legacy/vm.h>
-#include <util/common.h>
 #include <util/scoped_timer.h>
 
 namespace calamus::script::VM {
@@ -501,10 +501,10 @@ static InterpretResult run() {
             define_method(READ_STRING());
             break;
         default:
-            UNREACHABLE();
+            VERIFY(false, "Unreachable code");
         }
     }
-    UNREACHABLE();
+    VERIFY(false, "Unreachable code");
 }
 
 #undef READ_BYTE

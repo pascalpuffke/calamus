@@ -1,13 +1,13 @@
+#include <assert.hpp>
 #include <cstdlib>
 #include <cstring>
-#include <fmt/format.h>
 #include <numeric>
 #include <script_legacy/compiler.h>
 #include <script_legacy/config.h>
 #include <script_legacy/debug.h>
 #include <script_legacy/memory.h>
 #include <unordered_map>
-#include <util/assert.h>
+#include <util/print.h>
 
 namespace calamus::script {
 
@@ -313,7 +313,7 @@ static void binary([[maybe_unused]] bool) {
         emit(OpCode::Divide);
         break;
     default:
-        UNREACHABLE();
+        VERIFY(false, "Unreachable code");
     }
 }
 
@@ -349,7 +349,7 @@ static void literal([[maybe_unused]] bool) {
         emit(OpCode::True);
         break;
     default:
-        UNREACHABLE();
+        VERIFY(false, "Unreachable code");
     }
 }
 
@@ -458,7 +458,7 @@ static void unary([[maybe_unused]] bool) {
         emit(OpCode::Negate);
         break;
     default:
-        UNREACHABLE();
+        VERIFY(false, "Unreachable code");
     }
 }
 

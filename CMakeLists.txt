@@ -48,7 +48,7 @@ list(TRANSFORM SCRIPT_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 add_executable(${PROJECT_NAME} ${MAIN_SOURCES} ${SCRIPT_SOURCES})
-target_link_libraries(${PROJECT_NAME} fmt::fmt raylib)
+target_link_libraries(${PROJECT_NAME} fmt::fmt raylib dl assert)
 
 add_subdirectory(test)
 

@@ -3,7 +3,7 @@
 #include <concepts>
 #include <fmt/format.h>
 #include <limits>
-#include <util/common.h>
+#include <util/formatter.h>
 #include <util/typename.h>
 
 namespace calamus {
@@ -146,6 +146,10 @@ struct Position {
 
     constexpr auto operator+(const Position& other) const { return Position { x + other.x, y + other.y }; }
     constexpr auto operator-(const Position& other) const { return Position { x - other.x, y - other.y }; }
+    constexpr auto operator*(const Position& other) const { return Position { x * other.x, y * other.y }; }
+    constexpr auto operator/(const Position& other) const { return Position { x / other.x, y / other.y }; }
+    constexpr auto operator+(T other) const { return Position { x + other, y + other }; }
+    constexpr auto operator-(T other) const { return Position { x - other, y - other }; }
     constexpr auto operator*(T other) const { return Position { x * other, y * other }; }
     constexpr auto operator/(T other) const { return Position { x / other, y / other }; }
     constexpr auto operator+=(const Position& other) {
@@ -156,6 +160,36 @@ struct Position {
     constexpr auto operator-=(const Position& other) {
         x -= other.x;
         y -= other.y;
+        return *this;
+    }
+    constexpr auto operator*=(const Position& other) {
+        x *= other.x;
+        y *= other.y;
+        return *this;
+    }
+    constexpr auto operator/=(const Position& other) {
+        x /= other.x;
+        y /= other.y;
+        return *this;
+    }
+    constexpr auto operator+=(T other) {
+        x += other;
+        y += other;
+        return *this;
+    }
+    constexpr auto operator-=(T other) {
+        x -= other;
+        y -= other;
+        return *this;
+    }
+    constexpr auto operator*=(T other) {
+        x *= other;
+        y *= other;
+        return *this;
+    }
+    constexpr auto operator/=(T other) {
+        x /= other;
+        y /= other;
         return *this;
     }
 

@@ -4,6 +4,7 @@
 #include <script_legacy/debug.h>
 #include <script_legacy/memory.h>
 #include <script_legacy/vm.h>
+#include <util/print.h>
 
 namespace calamus::script {
 

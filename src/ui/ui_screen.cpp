@@ -1,6 +1,7 @@
 #include <graphics/renderer.h>
 #include <resources/state.h>
 #include <ui/ui_screen.h>
+#include <util/logging.h>
 #include <util/raylib/raylib_wrapper.h>
 
 namespace calamus::UI {
@@ -20,6 +21,8 @@ template <Arithmetic T = i32>
 
 void ScreenManager::check_hover(IntPosition position) {
     // TODO: Do this in a proper front to back order (by highest z-index?)
+    // NOTE: If we were to order by z-index, it'd be smarter to insert children already sorted
+    //       instead of copying, then sorting the vector every time this function is called.
     for (const auto& object : m_layouts[state.current_screen].children()) {
         if (!object->is_hoverable())
             continue;
@@ -40,6 +43,7 @@ void ScreenManager::check_hover(IntPosition position) {
 }
 
 void ScreenManager::check_click(MouseButton mouse_button, IntPosition position) {
+    // TODO: Same ordering note as in `check_hover`
     for (const auto& object : m_layouts[state.current_screen].children()) {
         if (!object->is_clickable())
             continue;
@@ -57,14 +61,21 @@ void ScreenManager::register_screen(Screen screen, ScreenLayout&& layout) {
 
 ScreenLayout& ScreenManager::layout(Screen screen) {
     auto result = m_layouts.find(screen);
-    ASSERT_MSG(result != m_layouts.end(), "No layout registered for requested screen");
+    VERIFY(result != m_layouts.end(), "No layout registered for requested screen");
 
     // Is this dumb?
+    // Answer 6 months later: It is dumb if rehashing was to occur (e.g. after element insertion).
+    //  Since all layouts are registered once at program start and the map is never modified afterward, this is fine.
+    //  Should this ever behave badly, return a copy (ew, expensive) or perhaps use shared pointers (slightly less ew?)
     return result->second;
 }
 
+ScreenLayout& ScreenManager::current_layout() {
+    return layout(state.current_screen);
+}
+
 ScreenManager::ScreenManager() {
-    VERIFY_PTR(state.renderer)->install_prerender_callback([this](auto) {
+    VERIFY(state.renderer)->install_prerender_callback([this](auto) {
         const auto mouse_position = rcore::get_mouse_position();
         check_hover(mouse_position);
 

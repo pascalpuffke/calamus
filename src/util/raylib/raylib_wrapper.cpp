@@ -1,4 +1,5 @@
 #include <raylib.h>
+#include <resources/state.h>
 #include <util/raylib/raylib_wrapper.h>
 #include <utility>
 
@@ -73,11 +74,11 @@ namespace rcore {
     void minimize_window() { MinimizeWindow(); }
     void restore_window() { RestoreWindow(); }
     void set_window_icon(const std::filesystem::path& icon_path) {
-        ASSERT(exists(icon_path));
-        ASSERT(is_regular_file(icon_path));
+        VERIFY(exists(icon_path));
+        VERIFY(is_regular_file(icon_path));
 
         auto image = LoadImage(icon_path.c_str());
-        ASSERT(image.width > 0);
+        VERIFY(image.width > 0);
         SetWindowIcon(image);
         UnloadImage(image);
     }
@@ -210,12 +211,12 @@ namespace rtext {
     void unload_font(Font font) { UnloadFont(font); }
 
     IntSize measure_text(std::string_view text, i32 size, i32 spacing, Resources::FontType font_type) {
-        const auto& font = VERIFY_PTR(state.font_manager)->get_font(font_type);
+        const auto& font = VERIFY(state.font_manager)->get_font(font_type);
         return ca_size_from(MeasureTextEx(font, text.data(), static_cast<f32>(size), static_cast<f32>(spacing)));
     }
 
     void draw_text(std::string_view text, IntPosition position, i32 size, Color color, Resources::FontType font_type) {
-        const auto& font = VERIFY_PTR(state.font_manager)->get_font(font_type);
+        const auto& font = VERIFY(state.font_manager)->get_font(font_type);
         DrawTextPro(font, text.data(), rl_vec_from(position), Vector2 { 0, 0 }, 0.0f, static_cast<f32>(size), 0, rl_color_from(color));
     }
 }

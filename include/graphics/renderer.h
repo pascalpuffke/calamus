@@ -1,5 +1,6 @@
 #pragma once
 
+#include <assert.hpp>
 #include <graphics/camera.h>
 #include <graphics/render_layer.h>
 #include <graphics/texture.h>
@@ -18,6 +19,7 @@ public:
     //      to other, unrelated parts of the engine.
     friend class WorldTestLayer;
     friend class CursorLayer;
+    friend class DesktopLayer;
 
     Renderer();
     ~Renderer();
@@ -47,7 +49,7 @@ public:
     [[nodiscard]] const auto& camera() const noexcept { return m_camera; }
 
     [[nodiscard]] const auto& window() const {
-        VERIFY_PTR(m_window);
+        VERIFY(m_window);
         return *m_window;
     }
 

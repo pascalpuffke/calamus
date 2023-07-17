@@ -2,6 +2,7 @@
 #include <script_legacy/debug.h>
 #include <script_legacy/object.h>
 #include <script_legacy/value.h>
+#include <util/print.h>
 
 namespace calamus::script {
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <assert.hpp>
 #include <memory>
 #include <ui/structs.h>
 #include <util/types.h>
@@ -57,16 +58,15 @@ public:
     T* as_ptr() {
         // static assertions won't work due to Object not being constexpr, so we can't check the type in 'if constexpr'
         // It would be totally possible to convert a lot of the UI stuff to be constexpr, but I don't care enough.
-        // Overhead should be minimal, and the assertions will be gone in release builds.
         switch (type()) {
         case ObjectType::Button: {
-            ASSERT_MSG((std::is_same_v<T, UI::Button>), "Cannot cast to object of different type");
+            VERIFY((std::is_same_v<T, UI::Button>), "Cannot cast to object of different type");
         } break;
         case ObjectType::Label: {
-            ASSERT_MSG((std::is_same_v<T, UI::Label>), "Cannot cast to object of different type");
+            VERIFY((std::is_same_v<T, UI::Label>), "Cannot cast to object of different type");
         } break;
         default: {
-            UNREACHABLE();
+            VERIFY(false, "Unknown object type");
         }
         }
 

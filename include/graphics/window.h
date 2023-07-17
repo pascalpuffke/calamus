@@ -6,7 +6,6 @@
 #include <ui/structs.h>
 #include <util/formatter.h>
 #include <util/types.h>
-#include <vector>
 
 namespace calamus {
 

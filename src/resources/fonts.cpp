@@ -1,8 +1,8 @@
+#include <assert.hpp>
 #include <filesystem>
 #include <fmt/std.h>
 #include <raylib.h>
 #include <resources/fonts.h>
-#include <util/assert.h>
 #include <util/raylib/raylib_wrapper.h>
 #include <utility>
 
@@ -10,7 +10,7 @@ namespace calamus::Resources {
 
 const Font& FontManager::get_font(FontType type) {
     const auto index = std::to_underlying(type);
-    ASSERT(index < std::to_underlying(FontType::_Count));
+    VERIFY(index < std::to_underlying(FontType::_Count));
     return m_fonts->at(type);
 }
 

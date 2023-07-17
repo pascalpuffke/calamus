@@ -108,7 +108,7 @@ Result<std::vector<TextureResource>> ResourceLoader::find_textures() {
                 continue;
             }
 
-            const auto* array = VERIFY_PTR(tile_names.as_array());
+            const auto* array = VERIFY(tile_names.as_array());
             const auto max_size = static_cast<size_t>((resource.size.width / resource.tile_size.width) * (resource.size.height / resource.tile_size.height));
 
             if (array->size() > max_size) {
