@@ -3,7 +3,9 @@ option(LTO "Enable link-time optimizations" ON)
 option(USE_MOLD "Force using the mold linker" OFF)
 
 if (${USE_MOLD})
-    add_link_options(-fuse-ld=mold)
+    if (NOT APPLE)
+        add_link_options(-fuse-ld=mold)
+    endif ()
 endif ()
 
 if (${NATIVE_OPTS})
