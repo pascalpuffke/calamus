@@ -162,8 +162,8 @@ Result<void> load_resources() {
     }
 
     auto fonts = TRY(loader->find_fonts());
-    for (const auto& [type, path] : fonts) {
-        TRY(font_manager->load_font(type, path));
+    for (const auto& [type, resource] : fonts) {
+        TRY(font_manager->load_font(type, resource));
     }
 
     return Result<void>::success();

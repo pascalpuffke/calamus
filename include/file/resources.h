@@ -20,13 +20,25 @@ struct TextureResource {
     std::optional<std::vector<std::string>> tile_names;
 };
 
+struct FontResource {
+    std::filesystem::path path;
+
+    enum class Filter {
+        Point,
+        Bilinear,
+        Trilinear,
+        Anisotropic,
+        _Error,
+    } filter;
+};
+
 class ResourceLoader final {
 public:
     explicit ResourceLoader(std::filesystem::path root);
     ~ResourceLoader();
 
-    [[nodiscard]] Result<std::vector<TextureResource>> find_textures();
-    [[nodiscard]] Result<std::unordered_map<Resources::FontType, std::filesystem::path>> find_fonts();
+    [[nodiscard]] auto find_textures() -> Result<std::vector<TextureResource>>;
+    [[nodiscard]] auto find_fonts() -> Result<std::unordered_map<Resources::FontType, FontResource>>;
 
 private:
     std::filesystem::path m_root;

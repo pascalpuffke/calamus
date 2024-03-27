@@ -153,7 +153,7 @@ Result<std::vector<TextureResource>> ResourceLoader::find_textures() {
     return textures;
 }
 
-Result<std::unordered_map<Resources::FontType, std::filesystem::path>> ResourceLoader::find_fonts() {
+Result<std::unordered_map<Resources::FontType, FontResource>> ResourceLoader::find_fonts() {
     CHECK_EXIST_DIR(m_root, "Resource root")
 
     const auto fonts_root = m_root / "fonts";
@@ -172,30 +172,53 @@ Result<std::unordered_map<Resources::FontType, std::filesystem::path>> ResourceL
         return Error::formatted("Error parsing font configuration file: {}", e.what());
     }
 
-    const auto find_font = [&](std::string_view font_type) -> Result<std::filesystem::path> {
-        const auto& font = resource_toml["resources"]["fonts"][font_type];
+    const auto find_font = [&](std::string_view font_type) -> Result<FontResource> {
+        const auto& font = resource_toml[font_type];
         if (!font)
             return Error::formatted("No font specified for type '{}'", font_type);
-        if (!font.is_string())
-            return Error::formatted("Invalid '{}' field in font configuration", font_type);
 
-        const auto& font_string = font.as_string()->get();
-        auto font_path = fonts_root / font_string;
+        // It'd be stupid if this wasn't the case. If the user breaks the config this badly, crashing is justified.
+        // To be honest I just don't feel like typing out another error message, and instead I'm wasting my time
+        // typing out these ridiculous comments. No one will ever read this.
+        VERIFY(font.is_table());
+        auto path = font["path"];
+        if (!path.is_string())
+            return Error::formatted("Invalid path field in font configuration for type '{}'", font_type);
+
+        const auto& path_string = path.as_string()->get();
+        auto font_path = fonts_root / path_string;
 
         if (!exists(font_path))
-            return Error::formatted("Font does not exist: '{}'", font_string);
+            return Error::formatted("Font does not exist: '{}'", font_path);
         if (!is_regular_file(font_path))
             return Error::formatted("Not a regular file: {}", font_path);
 
-        return font_path;
+        const auto filter_string = std::string_view { font["filtering"].value_or("point") };
+        auto filter = FontResource::Filter::_Error;
+        if (filter_string == "point")
+            filter = FontResource::Filter::Point;
+        if (filter_string == "bilinear")
+            filter = FontResource::Filter::Bilinear;
+        if (filter_string == "trilinear")
+            filter = FontResource::Filter::Trilinear;
+        if (filter_string == "anisotropic")
+            filter = FontResource::Filter::Anisotropic;
+
+        if (filter == FontResource::Filter::_Error)
+            return Error::formatted("'filtering' field must be one of ['point', 'bilinear', 'trilinear', 'anisotropic'] in font configuration for type '{}'", font_type);
+
+        return FontResource {
+            font_path,
+            filter,
+        };
     };
 
-    auto fonts = std::unordered_map<Resources::FontType, std::filesystem::path> {};
+    auto fonts = std::unordered_map<Resources::FontType, FontResource> {};
     fonts[Resources::FontType::Regular] = TRY(find_font("regular"));
     fonts[Resources::FontType::Monospace] = TRY(find_font("monospace"));
 
-    for (const auto& [type, path] : fonts) {
-        LOG_INFO("Font type {}: {}", std::to_underlying(type), path)
+    for (const auto& [type, resource] : fonts) {
+        LOG_INFO("Font type {}: {} with filter {}", std::to_underlying(type), resource.path, std::to_underlying(resource.filter))
     }
     return fonts;
 }

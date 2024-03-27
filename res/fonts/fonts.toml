@@ -1,3 +1,7 @@
-[resources.fonts]
-regular = "Lato-Regular.ttf"
-monospace = "TerminusTTF-Bold.ttf"
+[regular]
+path = "Lato-Regular.ttf"
+filtering = "anisotropic"
+
+[monospace]
+path = "PixeloidMono.ttf"
+filtering = "anisotropic"

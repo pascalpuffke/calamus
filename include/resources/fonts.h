@@ -6,29 +6,37 @@
 
 struct Font;
 
-namespace calamus::Resources {
+namespace calamus {
 
-enum class FontType {
-    Regular,
-    Monospace,
-    _Count,
-};
+// Forward decl to avoid circular include.
+// TODO: I'm tired (file/resources.h depends on this header for Resources::FontType)
+struct FontResource;
 
-class FontManager final {
-public:
-    FontManager();
-    ~FontManager();
+namespace Resources {
 
-    FontManager(const FontManager&) = delete;
-    FontManager(FontManager&&) noexcept = delete;
-    FontManager& operator=(const FontManager&) = delete;
-    FontManager& operator=(FontManager&&) noexcept = delete;
+    enum class FontType {
+        Regular,
+        Monospace,
+        _Count,
+    };
 
-    const Font& get_font(FontType);
-    Result<void> load_font(FontType, const std::filesystem::path&);
+    class FontManager final {
+    public:
+        FontManager();
+        ~FontManager();
 
-private:
-    std::unique_ptr<std::unordered_map<FontType, Font>> m_fonts {};
-};
+        FontManager(const FontManager&) = delete;
+        FontManager(FontManager&&) noexcept = delete;
+        FontManager& operator=(const FontManager&) = delete;
+        FontManager& operator=(FontManager&&) noexcept = delete;
+
+        [[nodiscard]] auto get_font(FontType) -> const Font&;
+        [[nodiscard]] auto load_font(FontType, const FontResource&) -> Result<void>;
+
+    private:
+        std::unique_ptr<std::unordered_map<FontType, Font>> m_fonts {};
+    };
+
+}
 
 }
