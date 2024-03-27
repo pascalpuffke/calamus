@@ -10,6 +10,7 @@ struct TomlConfig {
     i32 width;
     i32 height;
     i32 target_fps;
+    i32 target_tps;
     bool vsync;
     bool limit_fps;
     bool debug;
@@ -21,8 +22,8 @@ struct TomlConfig {
 
 class TomlConfigLoader final {
 public:
-    static Result<TomlConfig> load(const std::filesystem::path&);
-    static TomlConfig load_or_default(const std::filesystem::path&);
+    [[nodiscard]] static auto load(const std::filesystem::path&) -> Result<TomlConfig>;
+    [[nodiscard]] static auto load_or_default(const std::filesystem::path&) -> TomlConfig;
 };
 
 }

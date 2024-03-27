@@ -8,6 +8,10 @@ limit_fps = true
 # Target FPS if both limit_fps and vsync are false
 target_fps = 60
 
+[timing]
+# Target ticks per second value. FPS has to be at least this value for a steady tick time.
+target_tps = 20
+
 [resources]
 resources_root = "../res"
 # Textures have to be located in ../res/textures/

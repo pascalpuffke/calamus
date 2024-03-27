@@ -21,6 +21,7 @@ static MAYBE_CONSTEXPR_STD_STRING TomlConfig default_config = {
     .width = 800,
     .height = 600,
     .target_fps = 60,
+    .target_tps = 20,
     .vsync = true,
     .limit_fps = true,
     .debug = false,
@@ -52,6 +53,8 @@ Result<TomlConfig> TomlConfigLoader::load(const fs::path& path) {
         TOML_CONFIG_LOAD_FIELD(window, limit_fps);
         TOML_CONFIG_LOAD_FIELD(window, target_fps);
 
+        TOML_CONFIG_LOAD_FIELD(timing, target_tps);
+
         config.debug = config_toml["debug"]["enabled"].value_or(default_config.debug);
         TOML_CONFIG_LOAD_FIELD(debug, show_fps);
         TOML_CONFIG_LOAD_FIELD(debug, draw_ui_bounds);
@@ -77,7 +80,7 @@ Result<TomlConfig> TomlConfigLoader::load(const fs::path& path) {
 TomlConfig TomlConfigLoader::load_or_default(const fs::path& path) {
     auto config = load(path);
     return config.value_or_else([&]() {
-        LOG_WARNING("no TOML config found, using default: {}", config.error().message());
+        LOG_WARNING("no TOML config found, using default: {}", config.error());
         return default_config;
     });
 }
