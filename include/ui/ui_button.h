@@ -7,8 +7,6 @@
 namespace calamus::UI {
 
 class Button final : public Object {
-    UI_MAKE_HOVERABLE()
-    UI_MAKE_CLICKABLE()
 public:
     Button(std::shared_ptr<Label>& label, IntPosition position, IntSize size, std::function<void(IntPosition)> on_click, Alignment label_alignment = Alignment::Center);
     ~Button() override = default;
@@ -16,6 +14,9 @@ public:
     static std::shared_ptr<Button> create(std::shared_ptr<Label>&& label, IntPosition position, IntSize size, std::function<void(IntPosition)>&& on_click, Alignment label_alignment = Alignment::Center) {
         return std::make_shared<Button>(label, position, size, on_click, label_alignment);
     }
+
+    [[nodiscard]] bool is_hoverable() const override { return true; }
+    [[nodiscard]] bool is_clickable() const override { return true; }
 
     [[nodiscard]] ObjectType type() const override;
 

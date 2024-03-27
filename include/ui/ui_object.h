@@ -6,14 +6,6 @@
 #include <util/types.h>
 #include <utility>
 
-// do we really need these
-#define UI_MAKE_HOVERABLE() \
-public:                     \
-    [[nodiscard]] virtual bool is_hoverable() const override { return true; }
-#define UI_MAKE_CLICKABLE() \
-public:                     \
-    [[nodiscard]] virtual bool is_clickable() const override { return true; }
-
 namespace calamus::UI {
 
 class Button;
