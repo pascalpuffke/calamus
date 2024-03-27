@@ -4,9 +4,10 @@
 
 namespace calamus {
 
-Texture::Texture(u32 gl_id, IntSize size, IntSize parent_size, IntPosition offset_in_parent)
+Texture::Texture(u32 gl_id, IntSize size, Scaling scaling, IntSize parent_size, IntPosition offset_in_parent)
     : m_gl_id(gl_id)
     , m_size(size)
+    , m_scaling(scaling)
     , m_parent_size(parent_size)
     , m_offset_in_parent(offset_in_parent) {
 }
@@ -18,7 +19,7 @@ Texture::~Texture() {
         return;
 
     wrapper::rtextures::unload_texture(*this);
-    LOG_DEBUG("Unloaded texture ID {}", id());
+    LOG_INFO("Unloaded texture ID {}", id());
 }
 
 }

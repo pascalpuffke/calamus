@@ -66,6 +66,22 @@ Result<std::vector<TextureResource>> ResourceLoader::find_textures() {
         resource.size.height = static_cast<i32>(resource_toml["texture"]["height"].as_integer()->get());
 #undef CHECK_TYPE
 
+        if (const auto& scaling = resource_toml["texture"]["scaling"]; scaling) {
+            if (!scaling.is_string()) {
+                LOG_WARNING("Invalid 'scaling' field in description for texture '{}'", resource_name);
+                continue;
+            }
+
+            const auto scaling_string = std::string_view { scaling.as_string()->value_or("stretch") };
+            if (scaling_string != "stretch" && scaling_string != "fill") {
+                LOG_WARNING("'scaling' field must be one of ['stretch', 'fill'] in description for texture '{}'", resource_name);
+                continue;
+            }
+
+            const auto scaling_mode = scaling_string == "stretch" ? Texture::Scaling::Stretch : Texture::Scaling::Fill;
+            resource.scaling = scaling_mode;
+        }
+
         if (const auto& tiled = resource_toml["texture"]["tiled"]; tiled) {
             if (!tiled.is_boolean()) {
                 LOG_WARNING("Invalid 'tiled' field in description for texture '{}'", resource_name);

@@ -8,7 +8,8 @@ namespace calamus::Resources {
 Result<void> TextureManager::load_texture(
     std::filesystem::path&& path,
     std::string&& name,
-    IntSize size
+    IntSize size,
+    Texture::Scaling scaling
 ) {
     const auto rl_texture = LoadTexture(path.c_str());
     const auto actual_size = Size { rl_texture.width, rl_texture.height };
@@ -22,14 +23,15 @@ Result<void> TextureManager::load_texture(
 
     auto texture = std::make_unique<calamus::Texture>(
         rl_texture.id,
-        size
+        size,
+        scaling
     );
 
     auto [_, success] = m_textures.insert({ name, std::move(texture) });
     if (!success)
         return Error::formatted("Couldn't insert texture '{}'", name);
 
-    LOG_DEBUG("Loaded texture '{}' with ID {}", name, rl_texture.id);
+    LOG_INFO("Loaded texture '{}' with ID {}", name, rl_texture.id);
 
     return Result<void>::success();
 }
@@ -66,6 +68,7 @@ Result<void> TextureManager::load_tilemap(
             auto texture = std::make_unique<calamus::Texture>(
                 rl_texture.id,
                 tile_size,
+                Texture::Scaling::Stretch,
                 tilemap_size,
                 offset_in_texture
             );
@@ -73,7 +76,7 @@ Result<void> TextureManager::load_tilemap(
             if (!success)
                 return Error::formatted("Couldn't insert texture '{}'", name);
 
-            LOG_DEBUG("Loaded tiled texture '{}' with parent ID {} at offset {}", name, rl_texture.id, offset_in_texture);
+            LOG_INFO("Loaded tiled texture '{}' with parent ID {} at offset {}", name, rl_texture.id, offset_in_texture);
         }
     }
 
@@ -82,7 +85,7 @@ Result<void> TextureManager::load_tilemap(
 
 const Texture& TextureManager::texture(const std::string& key) {
     auto result = m_textures.find(key);
-    VERIFY(result != m_textures.end(), "tilemap not found");
+    VERIFY(result != m_textures.end(), "texture not found");
 
     // Lifetime of this texture is tied to this TextureManager instance, which practically means as long as
     // the application is running. Should be fine?

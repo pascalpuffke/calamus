@@ -23,7 +23,8 @@ public:
     [[nodiscard]] auto load_texture(
         std::filesystem::path&& path,
         std::string&& name,
-        IntSize size
+        IntSize size,
+        Texture::Scaling scaling
     ) -> Result<void>;
 
     [[nodiscard]] auto load_tilemap(
