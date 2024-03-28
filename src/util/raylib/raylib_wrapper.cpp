@@ -1,4 +1,5 @@
 #include <raylib.h>
+#include <resources/fonts.h>
 #include <resources/state.h>
 #include <util/raylib/raylib_wrapper.h>
 #include <utility>
@@ -210,18 +211,34 @@ namespace rtext {
     Font load_font(const std::filesystem::path& path) { return LoadFont(path.c_str()); }
     void unload_font(Font font) { UnloadFont(font); }
 
-    IntSize measure_text(std::string_view text, i32 size, i32 spacing, Resources::FontType font_type) {
+    IntSize measure_text(std::string_view text, i32 size, i32 spacing, FontType font_type) {
         const auto& font = VERIFY(state.font_manager)->get_font(font_type);
         return ca_size_from(MeasureTextEx(font, text.data(), static_cast<f32>(size), static_cast<f32>(spacing)));
     }
 
-    void draw_text(std::string_view text, IntPosition position, i32 size, Color color, Resources::FontType font_type) {
+    void draw_text(std::string_view text, IntPosition position, i32 size, Color color, FontType font_type) {
         const auto& font = VERIFY(state.font_manager)->get_font(font_type);
         DrawTextPro(font, text.data(), rl_vec_from(position), Vector2 { 0, 0 }, 0.0f, static_cast<f32>(size), 0, rl_color_from(color));
     }
 }
 
 namespace rtextures {
+    auto load_texture(const std::filesystem::path& path) -> Result<calamus::Texture, FileSystemError> {
+        if (!exists(path))
+            return FileSystemError::DoesNotExist;
+        if (!is_regular_file(path))
+            return FileSystemError::NotRegularFile;
+
+        const auto rl_texture = LoadTexture(path.c_str());
+        VERIFY(rl_texture.width > 0);
+
+        return calamus::Texture {
+            rl_texture.id,
+            IntSize { rl_texture.width, rl_texture.height },
+            calamus::TextureScaling::Fill
+        };
+    }
+
     void unload_texture(const calamus::Texture& texture) {
         // UnloadTexture only needs the ID, so passing an otherwise empty struct works fine.
         UnloadTexture(Texture2D {

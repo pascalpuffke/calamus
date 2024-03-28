@@ -30,8 +30,8 @@ public:
     void set_font_size(i32);
     [[nodiscard]] i32 font_size() const noexcept;
 
-    void set_font_type(Resources::FontType);
-    [[nodiscard]] Resources::FontType font_type() const noexcept;
+    void set_font_type(FontType);
+    [[nodiscard]] FontType font_type() const noexcept;
 
     void set_color(Color);
     [[nodiscard]] Color color() const noexcept;
@@ -45,7 +45,7 @@ private:
         return 0; // this genuinely works best.
     }
 
-    Resources::FontType m_font_type { Resources::FontType::Regular };
+    FontType m_font_type { FontType::Regular };
     Color m_color {};
     std::string m_text {};
     i32 m_font_size { 0 };

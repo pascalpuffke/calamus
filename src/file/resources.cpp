@@ -78,7 +78,7 @@ Result<std::vector<TextureResource>> ResourceLoader::find_textures() {
                 continue;
             }
 
-            const auto scaling_mode = scaling_string == "stretch" ? Texture::Scaling::Stretch : Texture::Scaling::Fill;
+            const auto scaling_mode = scaling_string == "stretch" ? TextureScaling::Stretch : TextureScaling::Fill;
             resource.scaling = scaling_mode;
         }
 
@@ -169,7 +169,7 @@ Result<std::vector<TextureResource>> ResourceLoader::find_textures() {
     return textures;
 }
 
-Result<std::unordered_map<Resources::FontType, FontResource>> ResourceLoader::find_fonts() {
+Result<std::unordered_map<FontType, FontResource>> ResourceLoader::find_fonts() {
     CHECK_EXIST_DIR(m_root, "Resource root")
 
     const auto fonts_root = m_root / "fonts";
@@ -229,9 +229,9 @@ Result<std::unordered_map<Resources::FontType, FontResource>> ResourceLoader::fi
         };
     };
 
-    auto fonts = std::unordered_map<Resources::FontType, FontResource> {};
-    fonts[Resources::FontType::Regular] = TRY(find_font("regular"));
-    fonts[Resources::FontType::Monospace] = TRY(find_font("monospace"));
+    auto fonts = std::unordered_map<FontType, FontResource> {};
+    fonts[FontType::Regular] = TRY(find_font("regular"));
+    fonts[FontType::Monospace] = TRY(find_font("monospace"));
 
     for (const auto& [type, resource] : fonts) {
         LOG_INFO("Font type {}: {} with filter {}", std::to_underlying(type), resource.path, std::to_underlying(resource.filter))

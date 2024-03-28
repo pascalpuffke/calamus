@@ -9,7 +9,7 @@ Result<void> TextureManager::load_texture(
     std::filesystem::path&& path,
     std::string&& name,
     IntSize size,
-    Texture::Scaling scaling
+    TextureScaling scaling
 ) {
     const auto rl_texture = LoadTexture(path.c_str());
     const auto actual_size = Size { rl_texture.width, rl_texture.height };
@@ -68,7 +68,7 @@ Result<void> TextureManager::load_tilemap(
             auto texture = std::make_unique<calamus::Texture>(
                 rl_texture.id,
                 tile_size,
-                Texture::Scaling::Stretch,
+                TextureScaling::Stretch,
                 tilemap_size,
                 offset_in_texture
             );

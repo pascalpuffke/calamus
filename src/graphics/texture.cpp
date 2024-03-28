@@ -4,7 +4,7 @@
 
 namespace calamus {
 
-Texture::Texture(u32 gl_id, IntSize size, Scaling scaling, IntSize parent_size, IntPosition offset_in_parent)
+Texture::Texture(u32 gl_id, IntSize size, TextureScaling scaling, IntSize parent_size, IntPosition offset_in_parent)
     : m_gl_id(gl_id)
     , m_size(size)
     , m_scaling(scaling)

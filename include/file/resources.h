@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <fmt/std.h>
 #include <graphics/texture.h>
-#include <resources/fonts.h>
+#include <resources/enums.h>
 #include <unordered_map>
 #include <util/formatter.h>
 #include <util/result.h>
@@ -15,7 +15,7 @@ struct TextureResource {
     std::filesystem::path path;
     std::string name;
     IntSize size;
-    Texture::Scaling scaling { Texture::Scaling::Stretch };
+    TextureScaling scaling { TextureScaling::Stretch };
 
     bool tiled;
     IntSize tile_size;
@@ -40,7 +40,7 @@ public:
     ~ResourceLoader();
 
     [[nodiscard]] auto find_textures() -> Result<std::vector<TextureResource>>;
-    [[nodiscard]] auto find_fonts() -> Result<std::unordered_map<Resources::FontType, FontResource>>;
+    [[nodiscard]] auto find_fonts() -> Result<std::unordered_map<FontType, FontResource>>;
 
 private:
     std::filesystem::path m_root;

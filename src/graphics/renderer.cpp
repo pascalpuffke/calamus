@@ -65,15 +65,15 @@ private:
         const auto frametime = rcore::get_frame_time();
         const auto fps = rcore::get_fps();
         const auto fps_string = fmt::format("{} fps ({:.02f}ms/f) {}", fps, frametime, renderer.frame_count());
-        rtext::draw_text(fps_string, position, font_size, color, Resources::FontType::Monospace);
+        rtext::draw_text(fps_string, position, font_size, color, FontType::Monospace);
 
         const auto pos = renderer.window().position();
         const auto pos_string = fmt::format("{}", pos);
-        rtext::draw_text(pos_string, IntPosition { position.x, position.y + font_size }, font_size, color, Resources::FontType::Monospace);
+        rtext::draw_text(pos_string, IntPosition { position.x, position.y + font_size }, font_size, color, FontType::Monospace);
 
         const auto size = renderer.window().size();
         const auto size_string = fmt::format("{}", size);
-        rtext::draw_text(size_string, IntPosition { position.x, position.y + (font_size * 2) }, font_size, color, Resources::FontType::Monospace);
+        rtext::draw_text(size_string, IntPosition { position.x, position.y + (font_size * 2) }, font_size, color, FontType::Monospace);
     }
 };
 
@@ -94,11 +94,6 @@ public:
             std::array { 'g', 'g', 'g', 'g', 'g', 'g', 'g', 'g' },
         };
 
-        auto texture_map = std::unordered_map<char, std::string> {
-            { 'g', "grass" },
-            { 'd', "dirt" },
-        };
-
         const auto win_size = renderer.window().size();
         for (auto x = 0; x < win_size.width; x += 16) {
             for (auto y = 0; y < win_size.height; y += 16) {
@@ -106,7 +101,7 @@ public:
                 const auto index_y = std::min(usize(y / 16), world[0].size() - 1);
                 const auto tile_char = world[index_x][index_y];
                 const auto texture_key = texture_map[tile_char];
-                const auto& texture = VERIFY(state.texture_manager)->texture(texture_key);
+                const auto& texture = state.texture_manager->texture(texture_key);
                 renderer.draw_texture(texture, IntPosition { x, y });
             }
         }

@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <fmt/std.h>
 #include <raylib.h>
+#include <resources/fonts.h>
 #include <util/raylib/raylib_wrapper.h>
 #include <utility>
 

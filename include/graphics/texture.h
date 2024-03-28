@@ -1,6 +1,6 @@
 #pragma once
 
-#include <span>
+#include <resources/enums.h>
 #include <ui/structs.h>
 
 namespace calamus {
@@ -15,18 +15,11 @@ namespace calamus {
  */
 class Texture final {
 public:
-    enum class Scaling {
-        // Scale texture to fill entire width. Aspect ratio may not be preserved.
-        Stretch,
-        // Scale texture keeping the aspect ratio. Parts of the texture may be cut off.
-        Fill,
-    };
-
     constexpr Texture() = default;
     Texture(
         u32 gl_id,
         IntSize size,
-        Scaling scaling,
+        TextureScaling scaling,
         IntSize parent_size = IntSize { 0, 0 },
         IntPosition offset_in_parent = IntPosition { 0, 0 }
     );
@@ -54,7 +47,7 @@ private:
     u32 m_gl_id {};
     IntSize m_size {};
 
-    Scaling m_scaling { Scaling::Stretch };
+    TextureScaling m_scaling { TextureScaling::Stretch };
 
     IntSize m_parent_size {};
     IntPosition m_offset_in_parent {};

@@ -4,9 +4,9 @@
 #include <graphics/camera.h>
 #include <graphics/texture.h>
 #include <input/key.h>
-#include <resources/fonts.h>
-#include <span>
+#include <resources/enums.h>
 #include <ui/structs.h>
+#include <util/result.h>
 
 /*
  * To reduce confusion, naming issues and stupid conversions between our types and raylib's bare C structs,
@@ -15,6 +15,18 @@
  */
 
 namespace calamus::wrapper {
+
+enum class FileSystemError : u8 {
+    DoesNotExist,
+    NotRegularFile,
+};
+
+static constexpr std::string_view fs_error_to_string(FileSystemError error) {
+    auto index = std::to_underlying(error);
+    return ((std::string_view[]) {
+        "File does not exist",
+        "Not a regular file" })[index];
+}
 
 namespace rcore {
     // Window
@@ -125,11 +137,12 @@ namespace rshapes {
 namespace rtext {
     Font load_font(const std::filesystem::path&);
     void unload_font(Font);
-    IntSize measure_text(std::string_view text, i32 size, i32 spacing, Resources::FontType font_type);
-    void draw_text(std::string_view text, IntPosition position, i32 size, Color color, Resources::FontType font_type = Resources::FontType::Regular);
+    IntSize measure_text(std::string_view text, i32 size, i32 spacing, FontType font_type);
+    void draw_text(std::string_view text, IntPosition position, i32 size, Color color, FontType font_type = FontType::Regular);
 }
 
 namespace rtextures {
+    auto load_texture(const std::filesystem::path&) -> Result<calamus::Texture, FileSystemError>;
     void unload_texture(const calamus::Texture&);
     void draw_texture(const calamus::Texture&, IntPosition, IntSize);
 }

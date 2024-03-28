@@ -24,7 +24,7 @@ public:
         std::filesystem::path&& path,
         std::string&& name,
         IntSize size,
-        Texture::Scaling scaling
+        TextureScaling scaling
     ) -> Result<void>;
 
     [[nodiscard]] auto load_tilemap(

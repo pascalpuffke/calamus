@@ -1,6 +1,8 @@
 #pragma once
 
+#include <file/resources.h>
 #include <filesystem>
+#include <resources/enums.h>
 #include <unordered_map>
 #include <util/result.h>
 
@@ -8,17 +10,7 @@ struct Font;
 
 namespace calamus {
 
-// Forward decl to avoid circular include.
-// TODO: I'm tired (file/resources.h depends on this header for Resources::FontType)
-struct FontResource;
-
 namespace Resources {
-
-    enum class FontType {
-        Regular,
-        Monospace,
-        _Count,
-    };
 
     class FontManager final {
     public:
