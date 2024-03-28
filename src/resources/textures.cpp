@@ -27,6 +27,10 @@ Result<void> TextureManager::load_texture(
         scaling
     );
 
+    // Always invalidate the texture cache before messing with the underlying map,
+    // as rehashing may occur and prevent us giving out bogus pointers.
+    invalidate_texture_cache();
+
     auto [_, success] = m_textures.insert({ name, std::move(texture) });
     if (!success)
         return Error::formatted("Couldn't insert texture '{}'", name);
@@ -72,6 +76,9 @@ Result<void> TextureManager::load_tilemap(
                 tilemap_size,
                 offset_in_texture
             );
+
+            invalidate_texture_cache();
+
             auto [_, success] = m_textures.insert({ name, std::move(texture) });
             if (!success)
                 return Error::formatted("Couldn't insert texture '{}'", name);
@@ -84,12 +91,27 @@ Result<void> TextureManager::load_tilemap(
 }
 
 const Texture& TextureManager::texture(const std::string& key) {
+    // Try the cached texture first
+    if (m_last_texture_cache && key == m_last_key_cache)
+        return *m_last_texture_cache;
+
+    // Slow case
     auto result = m_textures.find(key);
     VERIFY(result != m_textures.end(), "texture not found");
 
+    auto* texture = result->second.get();
+    VERIFY(texture, "stored texture is null");
+    m_last_key_cache = key;
+    m_last_texture_cache = texture;
+
     // Lifetime of this texture is tied to this TextureManager instance, which practically means as long as
     // the application is running. Should be fine?
-    return *(result->second);
+    return *texture;
+}
+
+auto TextureManager::invalidate_texture_cache() -> void {
+    m_last_texture_cache = nullptr;
+    m_last_key_cache = {};
 }
 
 TextureManager::TextureManager()

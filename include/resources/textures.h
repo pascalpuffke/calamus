@@ -39,6 +39,13 @@ public:
 
 private:
     std::unordered_map<std::string, std::unique_ptr<Texture>> m_textures {};
+
+    // Avoid expensive map lookups when called in a loop by caching a pointer to the last requested texture
+    // and return it when the currently asked for key equals the last one.
+    Texture* m_last_texture_cache { nullptr };
+    std::string m_last_key_cache;
+
+    auto invalidate_texture_cache() -> void;
 };
 
 }
