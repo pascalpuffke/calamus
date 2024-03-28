@@ -80,7 +80,11 @@ private:
 class WorldTestLayer final : public RenderLayer {
 public:
     explicit WorldTestLayer(Renderer& renderer)
-        : RenderLayer(renderer) { }
+        : RenderLayer(renderer) {
+        VERIFY(state.texture_manager);
+        // Assume the same texture_manager stays alive for the lifetime of this layer.
+        // I don't want to VERIFY that pointer thousands of time each frame, seemed to eat up lots of time.
+    }
 
     void on_render() override {
         static constexpr auto world = std::array {
@@ -106,17 +110,24 @@ public:
             }
         }
     }
+
+private:
+    std::unordered_map<char, std::string> texture_map = {
+        { 'g', "grass" },
+        { 'd', "dirt" },
+    };
 };
 
 class CursorLayer final : public RenderLayer {
 public:
     explicit CursorLayer(Renderer& renderer)
-        : RenderLayer(renderer) { }
+        : RenderLayer(renderer) {
+        VERIFY(state.texture_manager);
+    }
 
     void on_render() override {
         const auto absolute_position = rcore::get_mouse_position();
-        auto* textures = VERIFY(state.texture_manager);
-        const auto& cursor = textures->texture("cursor");
+        const auto& cursor = state.texture_manager->texture("cursor");
 
         renderer.draw_texture(cursor, absolute_position);
     }
