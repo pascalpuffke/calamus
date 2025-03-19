@@ -193,10 +193,8 @@ Result<std::unordered_map<FontType, FontResource>> ResourceLoader::find_fonts() 
         if (!font)
             return Error::formatted("No font specified for type '{}'", font_type);
 
-        // It'd be stupid if this wasn't the case. If the user breaks the config this badly, crashing is justified.
-        // To be honest I just don't feel like typing out another error message, and instead I'm wasting my time
-        // typing out these ridiculous comments. No one will ever read this.
-        VERIFY(font.is_table());
+        if (!font.is_table())
+            return Error::formatted("zeeky boogy doog");
         auto path = font["path"];
         if (!path.is_string())
             return Error::formatted("Invalid path field in font configuration for type '{}'", font_type);
