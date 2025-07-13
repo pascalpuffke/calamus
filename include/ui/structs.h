@@ -89,13 +89,13 @@ struct BasicColor {
     constexpr auto operator<=>(const BasicColor&) const = default;
 
 private:
-    [[nodiscard]] constexpr T check_overflow(T max, T first, T second) const {
+    [[nodiscard]] static constexpr T check_overflow(T max, T first, T second) {
         if (second > (max - first))
             return max;
         return first + second;
     }
 
-    [[nodiscard]] constexpr T check_underflow(T min, T first, T second) const {
+    [[nodiscard]] static constexpr T check_underflow(T min, T first, T second) {
         if (min > (first - second))
             return min;
         return first - second;
@@ -112,14 +112,14 @@ using Color = BasicColor<u8>;
 
 namespace default_palette {
     // clang-format off
-    static constexpr const auto black      = Color::from_hex(0x000000);
-    static constexpr const auto white      = Color::from_hex(0xFFFFFF);
-    static constexpr const auto gray       = Color::from_hex(0x808080);
-    static constexpr const auto dark_gray  = Color::from_hex(0x404040);
-    static constexpr const auto light_gray = Color::from_hex(0xC8C8C8);
-    static constexpr const auto red        = Color::from_hex(0xFF0000);
-    static constexpr const auto green      = Color::from_hex(0x00FF00);
-    static constexpr const auto blue       = Color::from_hex(0x0000FF);
+    static constexpr auto black      = Color::from_hex(0x000000);
+    static constexpr auto white      = Color::from_hex(0xFFFFFF);
+    static constexpr auto gray       = Color::from_hex(0x808080);
+    static constexpr auto dark_gray  = Color::from_hex(0x404040);
+    static constexpr auto light_gray = Color::from_hex(0xC8C8C8);
+    static constexpr auto red        = Color::from_hex(0xFF0000);
+    static constexpr auto green      = Color::from_hex(0x00FF00);
+    static constexpr auto blue       = Color::from_hex(0x0000FF);
     // clang-format on
 }
 
@@ -236,6 +236,7 @@ struct Size {
 
     constexpr auto operator<=>(const Size&) const = default;
 
+    constexpr auto area() const { return width * height; }
     constexpr auto to_position() const { return Position<T> { width, height }; }
 };
 
@@ -295,6 +296,12 @@ struct Rectangle {
 
     constexpr auto operator<=>(const Rectangle&) const = default;
 
+    template <std::convertible_to<T> U>
+    constexpr bool contains(const Rectangle<U>& other) const {
+        return x <= other.x && y <= other.y && width >= other.width && height >= other.height;
+    }
+
+    constexpr auto area() const { return width * height; }
     constexpr auto to_position() const { return Position { x, y }; }
     constexpr auto to_size() const { return Size { width, height }; }
 };
