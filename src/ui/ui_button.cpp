@@ -41,15 +41,19 @@ void Button::set_size(IntSize size) {
     reset_label();
 }
 
-void Button::on_hover_begin(IntPosition) {
+void Button::on_hover_begin(IntPosition position) {
     m_hovered = true;
     if (m_label_hover_color)
         m_label->set_color(*m_label_hover_color);
+
+    Object::on_hover_begin(position);
 }
 
 void Button::on_hover_end() {
     m_hovered = false;
     set_label_color(m_label_color);
+
+    Object::on_hover_end();
 }
 
 void Button::on_click(MouseButton mouse_button, IntPosition position) {

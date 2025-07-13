@@ -1,6 +1,5 @@
 #pragma once
 
-#include <functional>
 #include <graphics/window.h>
 #include <resources/state.h>
 #include <ui/layout/layout.h>
@@ -11,12 +10,16 @@
 
 namespace calamus::UI {
 
-struct ScreenLayout {
+class ScreenLayout {
+public:
     using object_ptr = std::shared_ptr<Object>;
 
     ScreenLayout(std::unique_ptr<Layout> layout, std::vector<object_ptr> children)
-        : m_layout(std::move(layout))
-        , m_children(std::move(children)) { }
+        : m_layout(std::move(layout)) {
+        m_children = std::move(children);
+
+        sort_children_by_z_index();
+    }
     explicit ScreenLayout() = default;
 
     template <typename LayoutClass>
@@ -43,8 +46,10 @@ struct ScreenLayout {
     [[nodiscard]] const auto& children() const noexcept { return m_children; }
 
 private:
+    void sort_children_by_z_index();
+
     std::unique_ptr<Layout> m_layout { nullptr };
-    std::vector<object_ptr> m_children {};
+    std::vector<object_ptr> m_children {}; // Sorted by z-index at insertion time
 };
 
 class ScreenManager final {
@@ -60,7 +65,7 @@ public:
     void check_hover(IntPosition);
     void check_click(MouseButton, IntPosition);
 
-    void register_screen(Screen, ScreenLayout&&);
+    void register_screen(Screen, ScreenLayout);
 
     [[nodiscard]] ScreenLayout& layout(Screen);
     [[nodiscard]] ScreenLayout& current_layout();

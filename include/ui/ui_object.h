@@ -1,8 +1,8 @@
 #pragma once
 
 #include <assert.hpp>
-#include <memory>
 #include <ui/structs.h>
+#include <util/logging.h>
 #include <util/types.h>
 #include <utility>
 
@@ -33,6 +33,9 @@ public:
         set_size(rect.to_size());
         set_position(rect.to_position());
     }
+
+    [[nodiscard]] virtual i32 z_index() const { return m_z_index; }
+    virtual void set_z_index(i32 z_index) { m_z_index = z_index; }
 
     [[nodiscard]] virtual bool is_hoverable() const { return false; }
     virtual void on_hover_begin(IntPosition) {};
@@ -74,6 +77,7 @@ public:
 protected:
     IntPosition m_position {};
     IntSize m_size {};
+    i32 m_z_index { 1 };
 };
 
 }

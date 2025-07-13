@@ -20,10 +20,11 @@ template <Arithmetic T = i32>
 }
 
 void ScreenManager::check_hover(IntPosition position) {
-    // TODO: Do this in a proper front to back order (by highest z-index?)
-    // NOTE: If we were to order by z-index, it'd be smarter to insert children already sorted
-    //       instead of copying, then sorting the vector every time this function is called.
     for (const auto& object : m_layouts[state.current_screen].children()) {
+        // Early return to avoid spamming begin events
+        if (object == m_last_hovered_object)
+            return;
+
         if (!object->is_hoverable())
             continue;
 
@@ -43,7 +44,6 @@ void ScreenManager::check_hover(IntPosition position) {
 }
 
 void ScreenManager::check_click(MouseButton mouse_button, IntPosition position) {
-    // TODO: Same ordering note as in `check_hover`
     for (const auto& object : m_layouts[state.current_screen].children()) {
         if (!object->is_clickable())
             continue;
@@ -55,7 +55,7 @@ void ScreenManager::check_click(MouseButton mouse_button, IntPosition position) 
     }
 }
 
-void ScreenManager::register_screen(Screen screen, ScreenLayout&& layout) {
+void ScreenManager::register_screen(Screen screen, ScreenLayout layout) {
     m_layouts[screen] = std::move(layout);
 }
 
@@ -95,6 +95,12 @@ void ScreenLayout::rebuild_layout(IntSize new_size) {
         // workaround for buttons using wrong colors before being hovered the first time
         object->on_hover_end();
     }
+}
+
+void ScreenLayout::sort_children_by_z_index() {
+    std::ranges::sort(m_children, [](const auto& lhs, const auto& rhs) {
+        return lhs->z_index() < rhs->z_index();
+    });
 }
 
 }
