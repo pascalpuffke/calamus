@@ -2,7 +2,7 @@
 
 #include <chrono>
 #include <fmt/color.h>
-#include <util/print.h>
+#include <util/logging.h>
 #include <util/types.h>
 
 namespace calamus {
@@ -24,7 +24,7 @@ public:
     ~ScopedTimer() {
         const DurationLike auto end = elapsed<std::chrono::microseconds>();
         const auto ms = static_cast<f64>(end.count()) / 1000.0;
-        println("[{}] {} ms", fmt::styled(m_name, fmt::fg(fmt::color::gray)), ms);
+        LOG_INFO("Timer '{}' finished in {} ms", fmt::styled(m_name, fmt::fg(fmt::color::gray)), ms);
     }
 
     template <DurationLike T>
@@ -41,3 +41,5 @@ private:
 };
 
 }
+
+#define SCOPED_TIMER const auto _timer = ::calamus::ScopedTimer { __FUNCTION__ }

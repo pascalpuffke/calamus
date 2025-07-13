@@ -1,5 +1,7 @@
 #include <file/resources.h>
 #include <file/toml-config.h>
+#include <fmt/ranges.h>
+#include <fmt/std.h>
 #include <graphics/renderer.h>
 #include <raylib.h>
 #include <resources/fonts.h>
@@ -9,7 +11,9 @@
 #include <ui/ui_button.h>
 #include <ui/ui_screen.h>
 #include <util/logging.h>
+#include <util/print.h>
 #include <util/raylib/raylib_wrapper.h>
+#include <util/scoped_timer.h>
 
 static calamus::State global_state;
 calamus::State& state = global_state;
@@ -124,6 +128,7 @@ void register_screens() {
 }
 
 Result<void> load_resources() {
+    SCOPED_TIMER;
     auto* texture_manager = VERIFY(state.texture_manager);
     auto* font_manager = VERIFY(state.font_manager);
 
@@ -170,6 +175,7 @@ Result<void> load_resources() {
 }
 
 void setup_window(Window& window) {
+    SCOPED_TIMER;
     window.init();
     window.set_title("dingus");
     window.hide_os_cursor();

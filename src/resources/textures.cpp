@@ -2,6 +2,7 @@
 #include <raylib.h>
 #include <resources/textures.h>
 #include <util/logging.h>
+#include <util/scoped_timer.h>
 
 namespace calamus::Resources {
 
@@ -11,6 +12,7 @@ Result<void> TextureManager::load_texture(
     IntSize size,
     TextureScaling scaling
 ) {
+    SCOPED_TIMER;
     const auto rl_texture = LoadTexture(path.c_str());
     const auto actual_size = Size { rl_texture.width, rl_texture.height };
     if (actual_size != size) {
@@ -47,6 +49,7 @@ Result<void> TextureManager::load_tilemap(
     IntSize tile_size,
     std::vector<std::string>&& tile_names
 ) {
+    SCOPED_TIMER;
     if (path.extension() != ".png")
         return Error { "Expected .png extension" };
 
@@ -104,7 +107,7 @@ const Texture& TextureManager::texture(const std::string& key) {
     m_last_key_cache = key;
     m_last_texture_cache = texture;
 
-    // Lifetime of this texture is tied to this TextureManager instance, which practically means as long as
+    // The lifetime of this texture is tied to this TextureManager instance, which practically means as long as
     // the application is running. Should be fine?
     return *texture;
 }
