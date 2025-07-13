@@ -260,11 +260,28 @@ namespace rtextures {
         };
         const auto source = IntRect { texture.offset().x, texture.offset().y, texture.width(), texture.height() };
         const auto dest = IntRect { position.x, position.y, size.width, size.height };
-        const auto origin = IntPosition { 0 };
-        const auto rotation = 0.0f;
+        constexpr auto origin = IntPosition { 0 };
+        constexpr auto rotation = 0.0f;
         const auto tint = Color::from_hex(0xFFFFFF);
 
         DrawTexturePro(rl_texture, rl_rect_from(source), rl_rect_from(dest), rl_vec_from(origin), rotation, rl_color_from(tint));
+    }
+
+    auto load_image(const std::filesystem::path& path) -> Result<calamus::Image, FileSystemError> {
+        if (!exists(path))
+            return FileSystemError::DoesNotExist;
+        if (!is_regular_file(path))
+            return FileSystemError::NotRegularFile;
+
+        const auto rl_image = LoadImage(path.c_str());
+        VERIFY(rl_image.width > 0);
+
+        return calamus::Image {
+            rl_image.data,
+            IntSize { rl_image.width, rl_image.height },
+            rl_image.mipmaps,
+            rl_image.format
+        };
     }
 }
 

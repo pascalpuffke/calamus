@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <graphics/camera.h>
+#include <graphics/image.h>
 #include <graphics/texture.h>
 #include <input/key.h>
 #include <resources/enums.h>
@@ -145,6 +146,8 @@ namespace rtextures {
     auto load_texture(const std::filesystem::path&) -> Result<calamus::Texture, FileSystemError>;
     void unload_texture(const calamus::Texture&);
     void draw_texture(const calamus::Texture&, IntPosition, IntSize);
+
+    auto load_image(const std::filesystem::path&) -> Result<calamus::Image, FileSystemError>;
 }
 
 }
