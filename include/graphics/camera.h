@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ui/structs.h>
+#include <util/formatter.h>
 
 namespace calamus {
 
@@ -31,3 +32,5 @@ private:
 };
 
 }
+
+FORMATTER(calamus::Camera, "Camera(offset: {}, target: {}, rotation: {}, zoom: {})", value.offset(), value.target(), value.rotation(), value.zoom())
